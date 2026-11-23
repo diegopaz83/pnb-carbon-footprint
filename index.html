@@ -1175,6 +1175,29 @@ input[type=checkbox]:not(.switch input):not(.chk input):not([hidden]):checked::a
 input[type=checkbox]:not(.switch input):not(.chk input):not([hidden]):focus-visible{outline:2px solid var(--focus);outline-offset:2px}
 .qa-l label{padding:6px 8px;border-radius:8px;border:1px solid transparent}.qa-l label:has(input:checked){background:#fbf1cf55;border-color:#ecd68a}
 .qa-l input{margin-top:1px!important}
+
+/* Preguntas paso 1: 2x3 */
+.m1-intro{max-width:880px;font-size:.95rem;color:var(--fg-2,var(--fg));margin:0 0 14px}
+.m1-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.m1{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:18px 18px 16px;display:flex;flex-direction:column;gap:10px;box-shadow:var(--pnb-shadow-sm)}
+.m1-h{display:flex;align-items:center;gap:10px}.m1-h h3{margin:0;font-size:1.05rem}
+.m1-n{flex:none;width:28px;height:28px;border-radius:50%;background:#0d1b33;color:var(--pnb-gold-500,#e6c35c);display:grid;place-items:center;font-weight:800;font-size:.85rem}
+.m1 p{margin:0;font-size:.85rem;color:var(--muted);line-height:1.45}
+.m1-in{width:100%;height:40px;padding:0 12px;border:1px solid var(--line-strong);border-radius:var(--r-md);background:var(--surface);color:var(--fg);font:inherit;font-size:.92rem}
+.m1-x{font-size:.78rem;color:var(--muted)}.m1-x.w{color:#a37f12;font-weight:600}
+.m1-seg{display:flex;border:1px solid var(--line-strong);border-radius:var(--r-md);overflow:hidden}.m1-seg button{flex:1;border:0;background:var(--surface);font:inherit;font-weight:600;padding:10px;cursor:pointer;color:var(--fg)}.m1-seg button+button{border-left:1px solid var(--line-strong)}.m1-seg button.on{background:var(--pnb-gold-500,#c9a227);color:#0d1b33}
+.m1-ppl{display:flex;flex-direction:column;gap:6px;max-height:150px;overflow:auto}
+.m1-ppl button{display:flex;align-items:center;gap:10px;text-align:left;border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface);padding:6px 10px;cursor:pointer;font:inherit;color:var(--fg)}
+.m1-ppl img,.m1-ppl .avatar{width:32px;height:32px;border-radius:50%;object-fit:cover;flex:none}
+.m1-ppl b{display:block;font-size:.88rem}.m1-ppl small{display:block;font-size:.74rem;color:var(--muted)}
+.m1-ppl button.on{border-color:var(--pnb-gold-500,#c9a227);background:#fbf1cf55;box-shadow:inset 0 0 0 1px var(--pnb-gold-500,#c9a227)}
+.m1-opts{display:flex;flex-direction:column;gap:6px}
+.m1-opts label{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:var(--r-md);padding:8px 10px;cursor:pointer}
+.m1-opts label.on{border-color:var(--pnb-gold-500,#c9a227);background:#fbf1cf55}
+.m1-opts input{accent-color:var(--pnb-gold-500,#c9a227);margin-top:3px}.m1-opts b{display:block;font-size:.86rem}.m1-opts small{display:block;font-size:.76rem;color:var(--muted)}
+.m1-foot{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-top:16px;padding:14px 18px;border-radius:var(--r-lg);background:var(--surface2);border:1px solid var(--line)}
+@media (max-width:1100px){.m1-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.m1-grid{grid-template-columns:1fr}.m1-foot{flex-direction:column;align-items:stretch}}
 </style>
 
 <section class="landing" id="landing" hidden>
@@ -1635,6 +1658,8 @@ addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer()});
 /* ---- Preguntas que aplican ---- */
 let TRAZA=null;const loadTraza=()=>TRAZA?Promise.resolve(TRAZA):fetch('traza.json').then(r=>r.json()).then(j=>TRAZA=j);
 let qState=null,qStep=1,qFilter='';
+const qMeta={sede:'Centro Agropecuario de la Granja - Sede Principal',vig:'2026',tipo:'Inventario anual',ts:'Agropecuaria',resp:'Jorge Ruiz',copy:'prev'};
+let _qs=null;const qSedes=()=>_qs||(_qs=TREE.flatMap(r=>r.ch.flatMap(c=>c.ch.map(s=>({k:s.n,r:r.n,c:c.n,tipo:s.tipo})))));
 V.preguntas=()=>{
   if(!TRAZA){loadTraza().then(render);return '<div class="panel">Cargando preguntas…</div>'}
   if(!qState){const by={};const agro=new Set();TRAZA.forEach(x=>{(by[x[3]]=by[x[3]]||new Set()).add(x[4]);if(/agrop|granja|agro/i.test(x[2]))agro.add(x[4])});
@@ -1642,15 +1667,19 @@ V.preguntas=()=>{
   const all=qState.flatMap(g=>g.q),on=all.filter(q=>q.on).length,srcOn=qState.filter(g=>g.q.some(q=>q.on)).length;
   return `<div class="pagehead"><div><div class="crumb">Captura · Nueva medición</div><h1>Preguntas que aplican</h1><p>Responde Sí o No a lo que hay en la sede. Con eso armamos las preguntas que verá cada mes quien captura.</p></div>
   <div class="stepper"><span class="${qStep===1?'on':''}">1 · Sede y vigencia</span><span class="${qStep===2?'on':''}">2 · Qué hay en la sede</span><span>3 · Confirmar</span></div></div>
-  ${qStep===1?`<section class="panel"><div class="form">
-    <label class="field"><span>Sede</span><select id="q-sede"><option>Centro Agropecuario de la Granja - Sede Principal</option><option>Centro de Biotecnología Agropecuaria - Sede Principal</option><option>Centro de Gestión Industrial - Sede Principal</option></select></label>
-    <label class="field"><span>Vigencia</span><select id="q-vig"><option>2026</option><option>2025</option></select></label>
-    <label class="field"><span>Tipo de medición</span><select id="q-tipo"><option>Inventario anual</option><option>Evento</option></select></label>
-    <label class="field"><span>Tipo de sede</span><select id="q-ts"><option>Agropecuaria</option><option>Industrial</option><option>Administrativa</option></select></label>
-    <label class="field"><span>Responsable de captura</span><input id="q-resp" value="Jorge Ruiz"></label>
-    <label class="field"><span>Copiar preguntas de</span><select id="q-copy"><option>Medición 2025 de la misma sede</option><option>Plantilla del tipo de sede</option></select></label>
-  </div><div style="margin-top:14px"><button class="btn primary" id="q-next" type="button">Continuar · sugerir preguntas</button></div></section>`:
-  (()=>{const resp=$('#q-resp')?.value||'Jorge Ruiz';const first=resp.split(' ')[0];
+  ${qStep===1?(()=>{const M=qMeta,S=qSedes(),cur=S.find(s=>s.k===M.sede),caps=CFG.users.filter(u=>u.r===3&&u.s==='Activo');
+    const box=(n,tt,help,ctl,extra='')=>`<article class="m1"><div class="m1-h"><span class="m1-n">${n}</span><h3>${tt}</h3></div><p>${help}</p>${ctl}${extra}</article>`;
+    return `<p class="m1-intro">Una <b>medición</b> es el inventario de una sede en un periodo. Aquí dices de qué sede, de qué año y quién va a llenar los datos. En el siguiente paso eliges qué cosas tiene esa sede.</p>
+    <div class="m1-grid">
+      ${box(1,'¿De qué sede?',`Cada sede se mide por separado. Busca entre las <b>${S.length} sedes</b> que hay en Estructura.`,`<input id="q-sede" list="q-sl" class="m1-in" value="${esc(M.sede)}" placeholder="Escribe el nombre de la sede o del centro"><datalist id="q-sl">${S.map(s=>`<option value="${esc(s.k)}">${esc(s.r)}</option>`).join('')}</datalist>`,cur?`<div class="m1-x">${esc(cur.r)} › ${esc(cur.c)}</div>`:`<div class="m1-x w">Elige una sede de la lista</div>`)}
+      ${box(2,'¿Qué año se mide?','La vigencia fija los factores y los PCG que se usan en el cálculo.',`<select id="q-vig" class="m1-in">${['2026','2025'].map(v=>`<option ${M.vig===v?'selected':''}>${v}</option>`).join('')}</select>`)}
+      ${box(3,'¿Qué tipo de medición?','<b>Inventario anual</b>: se llenan los 12 meses. <b>Evento</b>: una actividad puntual, como una feria o un congreso.',`<div class="m1-seg">${['Inventario anual','Evento'].map(v=>`<button type="button" data-mt="${v}" class="${M.tipo===v?'on':''}">${v}</button>`).join('')}</div>`)}
+      ${box(4,'¿Qué tipo de sede es?','Sirve para sugerir lo que suele tener una sede así. Viene de Estructura; puedes cambiarlo.',`<select id="q-ts" class="m1-in">${CFG.tipos.map(tp=>`<option ${tp.n===M.ts?'selected':''}>${esc(tp.n)}</option>`).join('')}</select>`,`<div class="m1-x">${esc((CFG.tipos.find(tp=>tp.n===M.ts)||{}).d||'')}</div>`)}
+      ${box(5,'¿Quién llena los datos?','La persona que registra cada mes, desde el celular o el computador. Le llega un correo con el enlace.',`<div class="m1-ppl">${caps.map(u=>`<button type="button" data-mr="${esc(u.n)}" class="${M.resp===u.n?'on':''}">${PHOTO_BY_NAME[u.n]?`<img src="${PHOTO[PHOTO_BY_NAME[u.n]]}" alt="">`:`<span class="avatar sm">${esc(u.n.split(' ').map(w=>w[0]).join('').slice(0,2))}</span>`}<span><b>${esc(u.n)}</b><small>${esc(u.a)}</small></span></button>`).join('')}</div>`,`<div class="m1-x">Solo aparecen usuarios con rol Responsable de captura. <a href="#cfg-usuarios">Invitar a alguien</a></div>`)}
+      ${box(6,'¿Desde dónde arrancamos?','Para no empezar de cero, copia lo que ya se definió antes.',`<div class="m1-opts">${[['prev','Lo del año pasado de esta sede','Mismas preguntas que en 2025.'],['tpl','La plantilla del tipo de sede','Lo típico de una sede '+M.ts.toLowerCase()+'.'],['none','Empezar en blanco','Respondes todo en el paso 2.']].map(([k,a,b])=>`<label class="${M.copy===k?'on':''}"><input type="radio" name="q-copy" value="${k}" ${M.copy===k?'checked':''}><span><b>${a}</b><small>${b}</small></span></label>`).join('')}</div>`)}
+    </div>
+    <div class="m1-foot"><span class="note">${cur&&M.resp?`Se creará la medición <b>${M.vig}</b> de <b>${esc(cur.k)}</b>, a cargo de <b>${esc(M.resp)}</b>.`:'Completa la sede y quién llena los datos para continuar.'}</span><button class="btn primary" id="q-next" type="button" ${cur&&M.resp?'':'disabled'}>Continuar · qué hay en la sede</button></div>`})():
+  (()=>{const resp=qMeta.resp||'Jorge Ruiz';const first=resp.split(' ')[0];
     const card=g=>{const gi=qState.indexOf(g),P=QPLAIN[g.s]||[title(g.s),''],n=g.q.filter(q=>q.on).length,yes=g.yes;
       return `<article class="qa ${yes===true?'yes':yes===false?'no':''}">
         <div class="qa-h"><div><h3>${P[0]}</h3><p>${P[1]}</p>${g.sug&&g.yes==null?'<span class="qa-sug">En sedes agropecuarias suele ser Sí</span>':''}</div>
@@ -1696,7 +1725,13 @@ function bindPreguntas(){
   $$('[data-yt]').forEach(b=>b.onclick=()=>{const g=qState[+b.dataset.yt];g.yes=g.yes!==true;if(g.yes){if(!g.q.some(q=>q.on)){if(g.q.some(q=>q.sg))g.q.forEach(q=>q.on=q.sg);else if(g.q.length<=3)g.q.forEach(q=>q.on=true);else{g.q[0].on=true;g.open=true}}}else{g.q.forEach(q=>q.on=false);g.open=false}rerender()});
   const qs=$('#q-sug');if(qs)qs.onclick=()=>{qState.forEach(g=>{if(g.yes==null&&g.sug){g.yes=true;g.q.forEach(q=>q.on=q.sg)}});rerender()};
   $$('[data-qo]').forEach(b=>b.onclick=()=>{const g=qState[+b.dataset.qo];g.open=!g.open;rerender()});
-  $('#q-next')&&($('#q-next').onclick=()=>{qStep=2;render()});
+  $('#q-next')&&($('#q-next').onclick=()=>{qStep=2;render();scrollTo(0,0)});
+  const qsd=$('#q-sede');if(qsd)qsd.onchange=()=>{qMeta.sede=qsd.value;const s=qSedes().find(x=>x.k===qsd.value);if(s&&CFG.tipos.some(tp=>tp.n===s.tipo))qMeta.ts=s.tipo;rerender()};
+  $('#q-vig')&&($('#q-vig').onchange=e=>{qMeta.vig=e.target.value});
+  $('#q-ts')&&($('#q-ts').onchange=e=>{qMeta.ts=e.target.value;rerender()});
+  $$('[data-mt]').forEach(b=>b.onclick=()=>{qMeta.tipo=b.dataset.mt;rerender()});
+  $$('[data-mr]').forEach(b=>b.onclick=()=>{qMeta.resp=b.dataset.mr;rerender()});
+  $$('input[name="q-copy"]').forEach(r=>r.onchange=()=>{qMeta.copy=r.value;rerender()});
   $('#q-back')&&($('#q-back').onclick=()=>{qStep=1;render()});
   $('#q-ok')&&($('#q-ok').onclick=()=>{toast('Medición creada. La sede ya ve sus preguntas en el registro mensual.');location.hash='registro'});
   $('#q-add')&&($('#q-add').onclick=()=>toast('Abre la librería de actividades para elegir una pregunta nueva'));
