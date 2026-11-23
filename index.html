@@ -1166,6 +1166,15 @@ body:has(.rm-cta) .toast{bottom:92px;z-index:95}body:has(.rm-sheet) .toast{botto
 .yn-sw.unset{background:var(--surface2);outline:2px dashed var(--line-strong);outline-offset:-2px}.yn-sw.unset i{display:none}.yn-sw.unset span{opacity:.55}.yn-sw.unset .yn-s{opacity:.55}
 .yn-sw:focus-visible{box-shadow:0 0 0 3px var(--focus)}
 .qa.yes{border-left-color:var(--pnb-gold-500,#c9a227)!important}.qa:not(.yes):not(.no){border-left-color:var(--line-strong)!important;border-left-style:dashed}
+
+/* checkbox con marca PNB (amarillo) en toda la app */
+input[type=checkbox]:not(.switch input):not(.chk input):not([hidden]){appearance:none;-webkit-appearance:none;width:18px;height:18px;flex:none;margin:0;border:1.5px solid var(--line-strong);border-radius:5px;background:var(--surface);display:inline-grid;place-items:center;cursor:pointer;vertical-align:middle;transition:background .12s,border-color .12s}
+input[type=checkbox]:not(.switch input):not(.chk input):not([hidden]):hover{border-color:var(--pnb-gold-500,#c9a227)}
+input[type=checkbox]:not(.switch input):not(.chk input):not([hidden]):checked{background:var(--pnb-gold-500,#c9a227);border-color:var(--pnb-gold-500,#c9a227)}
+input[type=checkbox]:not(.switch input):not(.chk input):not([hidden]):checked::after{content:"";width:5px;height:9px;border:solid #0d1b33;border-width:0 2px 2px 0;transform:translate(0,-1px) rotate(45deg)}
+input[type=checkbox]:not(.switch input):not(.chk input):not([hidden]):focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.qa-l label{padding:6px 8px;border-radius:8px;border:1px solid transparent}.qa-l label:has(input:checked){background:#fbf1cf55;border-color:#ecd68a}
+.qa-l input{margin-top:1px!important}
 </style>
 
 <section class="landing" id="landing" hidden>
