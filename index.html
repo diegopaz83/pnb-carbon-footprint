@@ -1283,6 +1283,11 @@ input[type=checkbox]:not(.switch input):not(.chk input):not([hidden]):focus-visi
 .rm-saved.out{opacity:0;transform:translateY(-6px)}
 @keyframes rmsv{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.rm-sheet.rm-slide>*,.rm-saved,#rm-next.ok{animation:none!important}}
+
+.qb-acc{flex:none;width:32px;height:32px;display:grid;place-items:center;border:0;border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;transition:transform .2s,background .15s}
+.qb-acc:hover{background:var(--surface2);color:var(--fg)}.qb-acc.on{transform:rotate(180deg)}
+.qb-b.col .qb-bar{padding-bottom:0}
+.qb.no .qb-b{opacity:.92}
 </style>
 
 <section class="landing" id="landing" hidden>
@@ -1784,21 +1789,22 @@ V.preguntas=()=>{
   qStep===3?qConfirm():(()=>{const resp=qMeta.resp||'Jorge Ruiz';const first=resp.split(' ')[0];
     const card=g=>{const gi=qState.indexOf(g),P=QPLAIN[g.s]||[title(g.s),''],n=g.q.filter(q=>q.on).length,yes=g.yes,multi=g.q.length>1,ne=g.q.filter(q=>q.on&&q.ev).length,LIM=5;
       const kb=(k,items,lbl)=>`<span class="kb-w"><button type="button" class="kb" data-qkb="${k}" aria-haspopup="menu" aria-expanded="${CFG.kb===k}" aria-label="${lbl}">⋮</button>${CFG.kb===k?`<div class="kb-m" role="menu">${items}</div>`:''}</span>`;
-      const rows=g.q.map((q,qi)=>({q,qi})).filter((x,i)=>g.open||g.q.length<=LIM+1||i<LIM);
+      const show=yes===true||!!g.keep,exp=g.acc!==false;const rows=g.q.map((q,qi)=>({q,qi})).sort((a,b)=>(b.q.on?1:0)-(a.q.on?1:0)).filter((x,i)=>g.open||g.q.length<=LIM+1||i<LIM);
       return `<article class="qb ${yes===true?'yes':yes===false?'no':'pend'}">
         <header class="qb-h">
           <div class="qb-t"><h3>${esc(P[0])}${g.sug&&yes==null?'<span class="qb-sug">Sugerido</span>':''}</h3>${P[1]?`<p>${esc(P[1])}</p>`:''}</div>
           <div class="qb-yn" role="radiogroup" aria-label="${esc(P[0])}"><button type="button" role="radio" aria-checked="${yes===true}" class="${yes===true?'on':''}" data-yv="${gi}:1">Sí</button><button type="button" role="radio" aria-checked="${yes===false}" class="${yes===false?'on':''}" data-yv="${gi}:0">No</button></div>
+          ${show?`<button type="button" class="qb-acc${exp?' on':''}" data-qacc="${gi}" aria-expanded="${exp}" aria-label="${exp?'Ocultar':'Ver'} preguntas"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>`:''}
           ${kb('q'+gi,`<button type="button" role="menuitem" data-qadd="${gi}">Agregar pregunta</button><button type="button" role="menuitem" data-qren="${gi}">Renombrar bloque</button><button type="button" role="menuitem" class="del" data-qdel="${gi}">Eliminar bloque</button>`,'Acciones del bloque')}
         </header>
-        ${yes?`<div class="qb-b">
+        ${show?`<div class="qb-b${exp?'':' col'}">
           <div class="qb-bar"><span><b>${n}</b>${multi?` de ${g.q.length}`:''} pregunta${(multi?g.q.length:n)===1?'':'s'} al mes <i>·</i> ${ic('camera')}<b>${ne}</b> con factura</span>${multi?`<span class="qb-all"><button type="button" data-qall="${gi}" ${n===g.q.length?'disabled':''}>Todas</button><button type="button" data-qnone="${gi}">Ninguna</button></span>`:''}</div>
-          ${g.q.length?`<ul class="qb-l">${rows.map(({q,qi})=>`<li class="qb-r${q.on?' on':''}">
+          ${!exp?'':g.q.length?`<ul class="qb-l">${rows.map(({q,qi})=>`<li class="qb-r${q.on?' on':''}">
             ${multi?`<label class="qb-c"><input type="checkbox" data-q="${gi}-${qi}" ${q.on?'checked':''}><span>${esc(qClean(q.t))}</span></label>`:`<span class="qb-c"><span>${esc(qClean(q.t))}</span></span>`}
             ${q.on?`<button type="button" class="qb-ev${q.ev?' on':''}" data-qev="${gi}-${qi}" data-v="${q.ev?0:1}" aria-pressed="${q.ev}" title="${q.ev?'Cada mes debe subir la factura. Clic para no pedirla':'No pide factura. Clic para pedirla'}">${ic('camera')}<span>${q.ev?'Factura':'Sin factura'}</span></button>`:''}
             ${kb('p'+gi+'-'+qi,`<button type="button" role="menuitem" data-pedit="${gi}-${qi}">Editar pregunta</button><button type="button" role="menuitem" class="del" data-pdel="${gi}-${qi}">Eliminar pregunta</button>`,'Acciones de la pregunta')}
           </li>`).join('')}</ul>`:`<p class="qb-empty">Sin preguntas todavía. Usa ⋮ › Agregar pregunta.</p>`}
-          ${g.q.length>LIM+1?`<button type="button" class="qb-more" data-qo="${gi}">${g.open?'Ver menos':`Ver las ${g.q.length} preguntas`}</button>`:''}
+          ${exp&&g.q.length>LIM+1?`<button type="button" class="qb-more" data-qo="${gi}">${g.open?'Ver menos':`Ver las ${g.q.length} preguntas`}</button>`:''}
         </div>`:''}
       </article>`};
     const pend=qState.filter(g=>g.yes==null).length;
@@ -1846,7 +1852,7 @@ const QGROUPS=[['Energía y combustibles',['ENERGIA ELECTRICA','COMBUSTIBLES LIQ
 const qClean=s=>s.replace(/\s+-\s+[A-Za-zÁÉÍÓÚáéíóú ]+$/,'').replace(/\s+/g,' ').replace(/\s+\?/,'?').trim();
 function bindPreguntas(){
   $$('[data-yv]').forEach(b=>b.onclick=()=>{const [gi,v]=b.dataset.yv.split(':');const g=qState[+gi],want=v==='1';if(g.yes===want)return;
-    g.yes=want;if(want){if(!g.q.some(q=>q.on)){if(g.q.some(q=>q.sg))g.q.forEach(q=>q.on=q.sg);else g.q.forEach(q=>q.on=true)}}else{g.q.forEach(q=>q.on=false);g.open=false}rerender()});
+    g.yes=want;g.keep=false;g.acc=true;if(want){if(!g.q.some(q=>q.on)){if(g.q.some(q=>q.sg))g.q.forEach(q=>q.on=q.sg);else g.q.forEach(q=>q.on=true)}}else{g.q.forEach(q=>q.on=false);g.open=false}rerender()});
   $$('[data-yt]').forEach(b=>b.onclick=()=>{const g=qState[+b.dataset.yt];g.yes=g.yes!==true;if(g.yes){if(!g.q.some(q=>q.on)){if(g.q.some(q=>q.sg))g.q.forEach(q=>q.on=q.sg);else if(g.q.length<=3)g.q.forEach(q=>q.on=true);else if(g.q.length){g.q[0].on=true;g.open=true}else g.open=true}}else{g.q.forEach(q=>q.on=false);g.open=false}rerender()});
   const qs=$('#q-sug');if(qs)qs.onclick=()=>{qState.forEach(g=>{if(g.yes==null&&g.sug){g.yes=true;g.q.forEach(q=>q.on=q.sg)}});rerender()};
   $$('[data-qev]').forEach(b=>b.onclick=()=>{const [g,q]=b.dataset.qev.split('-').map(Number);const x=qState[g].q[q];x.ev=b.dataset.v==='1';rerender()});
@@ -1859,8 +1865,9 @@ function bindPreguntas(){
   $$('[data-gren]').forEach(b=>b.onclick=()=>{const G=QGROUPS[+b.dataset.gren];qkb();promptModal('Renombrar sección','Nombre de la sección',G[0],'','Guardar',v=>{REGF.qsec=REGF.qsec.map(x=>x===G[0]?v:x);G[0]=v;rerender()})});
   $$('[data-gdel]').forEach(b=>b.onclick=()=>{const gx=+b.dataset.gdel,G=QGROUPS[gx];qkb();confirmModal({title:'¿Eliminar esta sección?',body:`<p>Se quita <b>${esc(G[0])}</b> con sus ${G[1].length} bloques de preguntas de esta medición.</p>`,ok:'Eliminar',danger:true,onOk:()=>{qState=qState.filter(g=>!G[1].includes(g.s));QGROUPS.splice(gx,1);rerender();toast('Sección eliminada')}})});
   $('#q-addsec')&&($('#q-addsec').onclick=()=>promptModal('Agregar sección','Agrupa varios bloques de preguntas','','Ej: Agua y residuos','Agregar',v=>{QGROUPS.push([v,[]]);rerender();toast('Sección agregada')}));
-  $$('[data-qall]').forEach(b=>b.onclick=()=>{const g=qState[+b.dataset.qall];g.q.forEach(q=>q.on=true);g.yes=true;rerender()});
-  $$('[data-qnone]').forEach(b=>b.onclick=()=>{const g=qState[+b.dataset.qnone];g.q.forEach(q=>q.on=false);g.yes=false;g.open=false;rerender();toast('Bloque en No: no aplica en esta sede')});
+  $$('[data-qall]').forEach(b=>b.onclick=()=>{const g=qState[+b.dataset.qall];g.q.forEach(q=>q.on=true);g.yes=true;g.keep=false;rerender()});
+  $$('[data-qnone]').forEach(b=>b.onclick=()=>{const g=qState[+b.dataset.qnone];g.q.forEach(q=>q.on=false);g.yes=false;g.keep=true;g.acc=true;rerender();toast('Bloque en No. Marca las que sí apliquen y vuelve a Sí')});
+  $$('[data-qacc]').forEach(b=>b.onclick=()=>{const g=qState[+b.dataset.qacc];g.acc=g.acc===false;rerender()});
   $$('[data-pedit]').forEach(b=>b.onclick=()=>{const [gi,qi]=b.dataset.pedit.split('-').map(Number),q=qState[gi].q[qi];qkb();promptModal('Editar pregunta','Así la verá quien captura cada mes',qClean(q.t),'','Guardar',v=>{q.t=v;rerender();toast('Pregunta actualizada')})});
   $$('[data-pdel]').forEach(b=>b.onclick=()=>{const [gi,qi]=b.dataset.pdel.split('-').map(Number),g=qState[gi],q=g.q[qi];qkb();confirmModal({title:'¿Eliminar esta pregunta?',body:`<p><b>${esc(qClean(q.t))}</b> deja de aparecer en el registro mensual de esta sede. Lo ya registrado en otros años no se borra.</p>`,ok:'Eliminar',danger:true,onOk:()=>{g.q.splice(qi,1);if(!g.q.some(x=>x.on)){g.yes=false;g.open=false;toast('Pregunta eliminada. El bloque quedó en No porque no le quedan preguntas')}else toast('Pregunta eliminada');rerender()}})});
   $$('[data-qpend]').forEach(c=>c.onchange=()=>{REGF.qpend=c.checked;rerender()});
@@ -1881,7 +1888,7 @@ function bindPreguntas(){
   $('#q-goreg')&&($('#q-goreg').onclick=()=>{qDone=false;qStep=1;location.hash='registro'});
   $('#q-add')&&($('#q-add').onclick=()=>toast('Abre la librería de actividades para elegir una pregunta nueva'));
   const s=$('#q-search');if(s){s.oninput=()=>{qFilter=s.value;const p=s.selectionStart;render();const n=$('#q-search');n.focus();n.setSelectionRange(p,p)}}
-  $$('[data-q]').forEach(c=>c.onchange=()=>{const [g,q]=c.dataset.q.split('-').map(Number);qState[g].q[q].on=c.checked;if(!qState[g].q.some(x=>x.on))qState[g].yes=false;rerender()});
+  $$('[data-q]').forEach(c=>c.onchange=()=>{const [g,q]=c.dataset.q.split('-').map(Number);const G=qState[g];G.q[q].on=c.checked;if(c.checked){G.yes=true}else if(!G.q.some(x=>x.on)){G.yes=false;G.keep=true}rerender()});
   $$('[data-all]').forEach(b=>b.onclick=e=>{e.preventDefault();const g=qState[+b.dataset.all];const v=!g.q.every(q=>q.on);g.q.forEach(q=>q.on=v);rerender()});
 }
 
