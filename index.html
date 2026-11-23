@@ -180,10 +180,11 @@ svg text{fill:var(--muted);font-family:var(--f-body);font-size:11px}
 .field.bad input,.field.bad select,.field.bad textarea{border-color:var(--bad)!important;box-shadow:0 0 0 3px color-mix(in srgb,var(--bad) 14%,transparent)}
 .field.bad>span{color:var(--bad)}
 .fz-p{padding-bottom:6px}
-.fz-f{border:0;padding:0 0 12px;margin:0;box-shadow:none;background:none;flex-wrap:wrap}
-.fz-f>label{display:flex;flex-direction:column;gap:4px;font-size:.72rem;color:var(--muted)}
-.fz-f>label.fz-s{flex:1 1 240px}.fz-f select{height:36px;border:1px solid var(--line-strong);border-radius:8px;background:var(--surface);color:var(--fg);padding:0 8px;font:inherit;font-size:.86rem}
-.fz-n{margin-left:auto;align-self:flex-end}
+.regf.fz-f{margin:0 0 14px;flex-wrap:wrap;row-gap:10px}.regf.fz-f>*{min-width:0}.regf.fz-f .st-est{flex:none;white-space:nowrap}.regf.fz-f>.st-estw{flex:none!important;min-width:auto!important}.regf.fz-f>label:has(select){flex:0 1 200px!important}
+.regf.fz-f>label.fz-s{flex:1 1 260px}.regf.fz-f .search{width:100%;height:34px}
+.regf.fz-f select{min-width:140px}
+.regf.fz-f .st-est{height:34px;align-items:center;padding:2px}.regf.fz-f .st-est button{padding:5px 10px}
+.fz-h{margin:0 0 10px;font-size:1.05rem}.fz-h .note{font-weight:400;font-size:.85rem}
 .fz-sc{max-height:640px;overflow:auto;border-top:1px solid var(--line)}
 table.fz-t{table-layout:fixed;width:100%;font-size:.86rem}
 .fz-t th{position:sticky;top:0;z-index:1;background:var(--surface);white-space:nowrap}
@@ -201,7 +202,7 @@ table.fz-t{table-layout:fixed;width:100%;font-size:.86rem}
 .fz-t tr.on td{background:color-mix(in srgb,var(--pnb-gold-500) 10%,var(--surface))}
 .fz-t .kb{opacity:1}.fz-t .kb-m{right:0;left:auto}
 @media (max-width:760px){.fz-sc{max-height:none;overflow:visible}
- .regf.fz-f{flex-wrap:wrap!important;overflow:visible!important;gap:10px}.regf.fz-f>*{flex:1 1 100%!important;min-width:0!important}.regf.fz-f .regf-t{display:none}.fz-f .st-est{width:100%}.fz-f .st-est button{flex:1;justify-content:center;padding:8px 4px}.fz-n{margin:0}
+ .regf.fz-f{flex-wrap:wrap!important;overflow:visible!important;gap:10px}.regf.fz-f>*{flex:1 1 100%!important;min-width:0!important}.regf.fz-f .regf-t{display:none}.fz-f .st-est{width:100%}.fz-f .st-est button{flex:1;justify-content:center;padding:8px 4px}
  .fz-t colgroup,.fz-t thead{display:none}.fz-t,.fz-t tbody{display:block;width:100%}
  .fz-t tr{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;padding:12px 4px;border-bottom:1px solid var(--line)}
  .fz-t td{display:block;padding:0!important;border:0!important;background:none!important}
@@ -2130,11 +2131,12 @@ V.factores=()=>{
   const gs=[...new Set(D.factores.map(f=>f.g))].sort();const nErr=D.factores.filter(f=>!f.del&&fzReq(f,fzUr(f),f.u,f.g).r.length).length;
   const kb=f=>`<span class="kb-w"><button type="button" class="kb" data-fkb="${f.id}" aria-haspopup="menu" aria-expanded="${CFG.kb==='f'+f.id}" aria-label="Acciones del factor ${f.id}">⋮</button>${CFG.kb==='f'+f.id?`<div class="kb-m" role="menu"><button type="button" role="menuitem" data-fe="${f.id}">Editar</button><button type="button" role="menuitem" data-fdup="${f.id}">Duplicar</button><button type="button" role="menuitem" data-ftz="${f.id}">Ver en trazabilidad</button><button type="button" role="menuitem" class="del" data-fdel="${f.id}">Eliminar</button></div>`:''}</span>`;
   return `<div class="pagehead"><div><div class="crumb">Parametrización · Vigencia 2025</div><h1>Factores de emisión</h1><p>${D.factores.filter(f=>!f.del).length} factores activos con fuente bibliográfica e incertidumbre. Usa ⋮ › Editar para cambiar uno.</p></div><button class="btn primary" id="fz-new" type="button">+ Nuevo factor</button></div>
-  <section class="panel fz-p"><div class="regf fz-f"><span class="regf-t" title="Filtros">${ic('filter')}</span>
+  <div class="regf fz-f${fz.q||fz.g||fz.st?' on':''}"><span class="regf-t" title="Filtros">${ic('filter')}</span>
     <label class="fz-s"><span>Buscar</span><input id="fz-q" class="search" placeholder="Número, actividad, gas o fuente" value="${esc(fz.q)}"></label>
     <label><span>Gas</span><select id="fz-g"><option value="">Todos</option>${gs.map(x=>`<option ${x===fz.g?'selected':''}>${esc(x)}</option>`).join('')}</select></label>
     <div class="ms-l st-estw"><span>Estado</span><div class="s1-seg st-est">${[['','Todos',D.factores.filter(f=>!f.del).length],['ok','Listos',D.factores.filter(f=>!f.del).length-nErr],['err','Por revisar',nErr]].map(([k,l,n])=>`<button type="button" class="${(fz.st||'')===k?'on':''}" data-fst="${k}">${l} <b>${n}</b></button>`).join('')}</div></div>
-    <span class="note fz-n">${list.length} factor${list.length===1?'':'es'}</span></div>
+    ${fz.q||fz.g||fz.st?'<button type="button" class="lnk-calc" data-fz-clear>Limpiar</button>':''}</div>
+  <section class="panel fz-p"><h2 class="fz-h">Factores <span class="note">· ${list.length} de ${D.factores.filter(f=>!f.del).length}</span></h2>
   <div class="fz-sc"><table class="fz-t"><colgroup><col class="c-id"><col><col class="c-g"><col class="c-fe"><col class="c-u"><col class="c-st"><col class="c-k"></colgroup>
   <thead><tr><th>#</th><th>Actividad y fuente</th><th>Gas</th><th>Factor</th><th class="num" title="Incertidumbre inferior y superior del factor">Incert.</th><th>Estado</th><th></th></tr></thead><tbody>
   ${list.map(f=>{const R=fzReq(f,fzUr(f),f.u,f.g),bad=R.r.length;return `<tr class="${f.id===fz.edit&&fz.open?'on':''}${bad?' bad':''}"><td class="mono fz-id">${f.id}</td><td><div class="fz-a" title="${esc(f.a)}">${esc(f.a)}</div><div class="note fz-src" title="${esc(f.src)}">${esc(f.src)||'<i>Sin fuente</i>'}</div></td><td><span class="fz-gas">${esc(f.g)}</span></td><td><b class="mono">${nfx.format(f.fe)}</b><div class="note mono">${esc(f.u)}</div></td><td class="num mono fz-u">${f.ip||f.sp?`−${fzP(f.ip)}<br>+${fzP(f.sp)}`:'<span class="note">Sin dato</span>'}</td><td>${bad?`<span class="fz-chip err" title="${esc(R.r.join(' '))}">${ic('alert')||'!'} Revisar</span>`:R.v[0]==='info'?'<span class="fz-chip info" title="Factor en CO2e: no aplica PCG">Listo · CO2e</span>':'<span class="fz-chip ok">Listo</span>'}</td><td>${kb(f)}</td></tr>`}).join('')||'<tr><td colspan="7" class="note" style="padding:24px;text-align:center">Ningún factor coincide.</td></tr>'}</tbody></table></div></section>
@@ -2887,7 +2889,7 @@ function bind(r){
   if(r==='incertidumbre')$$('[data-ut]').forEach(b=>b.onclick=()=>{uTab=b.dataset.ut;rerender()});
   if(r==='trazabilidad'&&TRAZA){const q=$('#tz-q');q.oninput=()=>{tz.q=q.value;tz.pg=0;const p=q.selectionStart;render();const n=$('#tz-q');n.focus();n.setSelectionRange(p,p)};$('#tz-fu').onchange=e=>{tz.fu=e.target.value;tz.pg=0;render()};$('#tz-prev').onclick=()=>{tz.pg--;rerender()};$('#tz-next').onclick=()=>{tz.pg++;rerender()};$$('[data-tz]').forEach(tr=>{tr.onclick=()=>openTraza(+tr.dataset.tz);tr.onkeydown=e=>{if(e.key==='Enter')openTraza(+tr.dataset.tz)}})}
   if(r==='factores'){const q=$('#fz-q');q.oninput=()=>{fz.q=q.value;const p=q.selectionStart;render();const n=$('#fz-q');n.focus();n.setSelectionRange(p,p)};$('#fz-g').onchange=e=>{fz.g=e.target.value;render()};
-    $$('[data-fst]').forEach(b=>b.onclick=()=>{fz.st=b.dataset.fst;rerender()});
+    $$('[data-fst]').forEach(b=>b.onclick=()=>{fz.st=b.dataset.fst;rerender()});$$('[data-fz-clear]').forEach(b=>b.onclick=()=>{fz.q='';fz.g='';fz.st='';rerender()});
     $$('[data-fkb]').forEach(b=>b.onclick=e=>{e.stopPropagation();const k='f'+b.dataset.fkb;CFG.kb=CFG.kb===k?null:k;rerender();document.querySelector('.kb-m button')?.focus()});
     const fk=()=>{CFG.kb=null};
     $$('[data-fe]').forEach(b=>b.onclick=e=>{e.stopPropagation();fk();fz.edit=b.dataset.fe;fz.open=true;fz.ur=fz.uf=fz.gg=null;rerender();fzDrawer()});
