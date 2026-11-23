@@ -2363,7 +2363,10 @@ function stShort(x){const p=x.p;if(!p||x.ch.length)return x.n;const a=x.n,b=p.n;
 function stLeaves(x){return x.ch.length?x.ch.flatMap(stLeaves):[x]}
 function stSum(x){const L=stLeaves(x),a=L.filter(s=>s.s==='Activa').length,i=L.filter(s=>!s.inc).length,p=L.filter(s=>s.part).length,lv=CFG.levels,nm=(lv[lv.length-1]||'sede').toLowerCase();
   return `<span><b>${L.length}</b> ${esc(nm)}${L.length===1?'':'s'}</span><span>${a} activa${a===1?'':'s'}</span>${i?`<span>${i} excluida${i===1?'':'s'}</span>`:''}${p?`<span class="st-sp">${p} particular${p===1?'':'es'}</span>`:''}`}
-function stRow(x){if(!stVis(x))return '';const has=x.ch.length,open=stAny()?x.ch.some(stVis):CFG.open[x.id];const L=CFG.levels;
+const stSig=()=>JSON.stringify([REGF.sreg,REGF.scen,REGF.stip,REGF.sexc,REGF.sina,REGF.sest,CFG.q]);
+const stAuto=()=>stAny()&&CFG.stSig!==stSig();
+function stFix(){if(stAuto()){const o={};Object.values(NODES).forEach(x=>{if(x.ch.length&&stVis(x)&&x.ch.some(stVis))o[x.id]=1});CFG.open=o}CFG.stSig=stSig()}
+function stRow(x){if(!stVis(x))return '';const has=x.ch.length,open=stAuto()?x.ch.some(stVis):CFG.open[x.id];const L=CFG.levels;
   return `<tr class="l${Math.min(x.lv,2)}${x.inc?'':' exc'}${x.s==='Activa'?'':' ina'}" style="--lv:${x.lv}"><td><div class="st-n" style="padding-left:${x.lv*28}px">${has?`<button class="tg" type="button" data-tg="${x.id}" aria-expanded="${!!open}" aria-label="${open?'Contraer':'Expandir'}">${open?'▾':'▸'}</button>`:'<span class="tg"></span>'}${has?`<span class="st-cnt" title="${x.ch.length} ${esc((L[x.lv+1]||'').toLowerCase())}${x.ch.length>1?'s':''}">${x.ch.length}</span>`:'<span class="st-cnt e"></span>'}${CFG.edit===x.id?`<input data-ed="${x.id}|n" data-edn value="${esc(x.n)}" aria-label="${esc(L[x.lv]||'Nombre')}">`:`<span class="st-lbl" title="${esc(x.n)} · Código ${esc(x.code)}">${esc(stShort(x))}</span>`}<span class="kb-w"><button type="button" class="kb" data-kb="${x.id}" aria-haspopup="menu" aria-expanded="${CFG.kb===x.id}" aria-label="Acciones de ${esc(x.n)}">⋮</button>${CFG.kb===x.id?`<div class="kb-m" role="menu"><button type="button" role="menuitem" data-kbe="${x.id}">Editar nombre</button>${x.lv<L.length-1?`<button type="button" role="menuitem" data-add="${x.id}">Agregar ${esc((L[x.lv+1]||'').toLowerCase())}</button>`:''}<button type="button" role="menuitem" class="del" data-del="${x.id}">Eliminar</button></div>`:''}</span></div></td>
   ${x.lv===L.length-1?`<td><select data-ed="${x.id}|tipo" aria-label="Tipo de unidad">${CFG.tipos.map(tp=>`<option ${tp.n===x.tipo?'selected':''}>${esc(tp.n)}</option>`).join('')}</select></td>
   <td>${sw(`data-ed="${x.id}|s"`,x.s==='Activa','Activa')}</td><td title="${x.s==='Activa'?'':'Una unidad inactiva no entra al inventario'}">${sw(`data-ed="${x.id}|inc"${x.s==='Activa'?'':' disabled'}`,x.inc,'Incluida')}</td><td>${(()=>{const caps=CFG.users.filter(u=>u.r===3);if(x.resp===undefined)x.resp=caps.length?caps[(parseInt(String(x.id).replace(/\D/g,''))||0)%caps.length].n:'';return `<select data-ed="${x.id}|resp" aria-label="Responsable de la sede"><option value="">Sin asignar</option>${caps.map(u=>`<option ${u.n===x.resp?'selected':''}>${esc(u.n)}</option>`).join('')}</select>`})()}</td><td><button type="button" class="st-pq${x.part?' on':''}" data-spq="${x.id}" title="${x.part?'Tiene preguntas propias. Clic para ver o volver al estándar':'Usa la plantilla '+esc(x.tipo)+'. Clic para personalizar'}">${x.part?'Particular':'Estándar'}<span aria-hidden="true">›</span></button></td>`:`<td colspan="5" class="st-sum">${stSum(x)}</td>`}</tr>${open?x.ch.map(stRow).join(''):''}`}
@@ -2471,7 +2474,7 @@ function bindCfg(r){
     $$('[data-orgopen]').forEach(b=>b.onclick=()=>{const v=b.dataset.orgopen;if([...$('#org').options].some(o=>o.value===v)){$('#org').value=v;rerender()}else toast('Organización en borrador: termina su configuración para abrirla')});
     $('#org-save').onclick=()=>toast('Datos guardados');$('#org-logo').onclick=()=>toast('Logo cargado (simulado). Se verá en el encabezado y el informe.')}
   if(r==='cfg-estructura'){
-    $$('[data-tg]').forEach(b=>b.onclick=()=>{CFG.open[b.dataset.tg]=!CFG.open[b.dataset.tg];rerender()});
+    $$('[data-tg]').forEach(b=>b.onclick=()=>{stFix();CFG.open[b.dataset.tg]=!CFG.open[b.dataset.tg];rerender()});
     const q=$('#st-q');q.oninput=()=>{CFG.q=q.value;const p=q.selectionStart;rerender();const n=$('#st-q');n.focus();n.setSelectionRange(p,p)};
     $$('[data-lv]').forEach(i=>i.onchange=()=>{CFG.levels[+i.dataset.lv]=i.value.trim()||CFG.levels[+i.dataset.lv];rerender()});
     $('#lv-add')&&($('#lv-add').onclick=()=>{CFG.levels.push('Nivel '+(CFG.levels.length+1));rerender()});
@@ -2490,8 +2493,8 @@ function bindCfg(r){
     $('#st-add1').onclick=()=>addChild(null);
     $$('[data-spq]').forEach(b=>b.onclick=()=>{qSede=b.dataset.spq;qTs=null;location.hash='preguntas';scrollTo(0,0)});
     $$('[data-ed]').forEach(el=>el.onchange=()=>{const [id,f]=el.dataset.ed.split('|'),x=NODES[id];if(f==='inc')x.inc=el.checked?1:0;else if(f==='s'){x.s=el.checked?'Activa':'Inactiva';if(!el.checked)x.inc=0;else x.inc=1}else if(f==='resp')x.resp=el.value;else x[f]=el.value.trim()||x[f];toast('Guardado');if(f==='inc'||f==='s'||f==='tipo')rerender()});
-    $('#st-exp').onclick=()=>{Object.values(NODES).forEach(x=>{if(x.ch.length)CFG.open[x.id]=1});rerender()};
-    $('#st-col').onclick=()=>{CFG.open={};rerender()};}
+    $('#st-exp').onclick=()=>{CFG.stSig=stSig();Object.values(NODES).forEach(x=>{if(x.ch.length)CFG.open[x.id]=1});rerender()};
+    $('#st-col').onclick=()=>{CFG.stSig=stSig();CFG.open={};rerender()};}
   if(r==='cfg-tipos'){$$('[data-tp]').forEach(b=>b.onclick=()=>{const t=CFG.tipos[+b.dataset.tp],f=b.dataset.f;t.f=t.f.includes(f)?t.f.filter(x=>x!==f):[...t.f,f];rerender()});
     $('#tp-new').onclick=()=>{CFG.tipos.push({n:'Nuevo tipo '+(CFG.tipos.length+1),d:'Describe qué unidades pertenecen a este tipo.',f:['ENERGIA ELECTRICA']});rerender();toast('Tipo creado: elige sus fuentes sugeridas')}}
   if(r==='cfg-vigencias'){$$('[data-vg]').forEach(b=>b.onclick=()=>{CFG.vsel=+b.dataset.vg;rerender()});$$('[data-enf]').forEach(b=>b.onclick=()=>{CFG.enfoque=b.dataset.enf;rerender()});
