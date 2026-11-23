@@ -1068,6 +1068,19 @@ body:has(.rm-cta) .toast{bottom:92px;z-index:95}body:has(.rm-sheet) .toast{botto
  .kb-m{left:auto;right:0}
  .wz-steps{overflow-x:auto;scrollbar-width:none}
 }
+
+/* topbar: una sola fila, se autoajusta */
+.top{flex-wrap:nowrap}
+.top .tcrumb{flex:0 1 auto;min-width:0}
+.top .ctx{flex:0 1 auto;min-width:0;flex-wrap:nowrap}
+.top .ctx>*{min-width:0}
+.top .ctx label{min-width:0}
+.top .ctx #org{max-width:220px;width:100%}
+.top .ctx #unit{max-width:200px;width:100%}
+.top .spacer{flex:1 1 0;min-width:0}
+.top .user-wrap,.top .icon-btn{flex:none}
+@media (max-width:1180px){.top #ctx-unit{display:none}}
+@media (max-width:1040px){.top .u-txt{display:none}}
 </style>
 
 <section class="landing" id="landing" hidden>
