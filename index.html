@@ -1266,6 +1266,23 @@ input[type=checkbox]:not(.switch input):not(.chk input):not([hidden]):focus-visi
 .qb-empty{margin:0;padding:12px;border-radius:10px;background:var(--surface2);font-size:.82rem;color:var(--muted);text-align:center}
 .qa-addsec{border-style:solid!important;background:var(--surface2)!important}
 @media (max-width:640px){.qb-h{flex-wrap:wrap;padding:12px 10px 12px 14px}.qb-t{flex-basis:calc(100% - 44px)}.qb-yn{order:3;margin-left:0}.qb-b{padding:0 10px 10px 14px}.qb-r{gap:6px}.qb-ev{padding:6px 8px}.qb-ev span{display:none}.qb-ev .ic{width:15px;height:15px}.qb-bar{flex-wrap:wrap}}
+
+.rm-prog{display:flex;gap:3px;margin:8px 0 2px}.rm-prog i{flex:1;height:4px;border-radius:2px;background:var(--line)}.rm-prog i.d{background:var(--pnb-gold-500,#c9a227)}.rm-prog i.c{background:#0d1b33}
+.rm-scrim.still{animation:none!important}
+.rm-sheet.rm-slide{animation:none}
+.rm-sheet.rm-slide>*:not(.rm-saved):not(.rm-grip){animation:rmnx .34s cubic-bezier(.2,.8,.2,1) both}
+.rm-sheet.rm-slide>h2{animation-delay:.04s}
+@keyframes rmnx{from{opacity:0;transform:translateX(42px)}to{opacity:1;transform:none}}
+.rm-sheet.leaving>*:not(.rm-grip):not(.rm-act):not(.rm-sh):not(.rm-prog){transition:opacity .3s,transform .3s;opacity:.25;transform:translateX(-18px)}
+#rm-next.ok{background:#1f7a4d!important;border-color:#1f7a4d!important;color:#fff!important;opacity:1!important;animation:rmpop .35s ease}
+#rm-next.ok .ic{width:18px;height:18px;margin-right:6px;vertical-align:-3px}
+@keyframes rmpop{0%{transform:scale(.96)}50%{transform:scale(1.04)}100%{transform:scale(1)}}
+.rm-saved{display:flex;align-items:center;gap:8px;margin:8px 0 4px;padding:8px 12px;border-radius:12px;background:#0d1b33;color:#fff;font-size:.8rem;animation:rmsv .3s ease both;transition:opacity .4s,transform .4s}
+.rm-saved .ic{flex:none;width:18px;height:18px;padding:2px;border-radius:50%;background:var(--pnb-gold-500,#c9a227);color:#0d1b33}
+.rm-saved span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:rgba(255,255,255,.8)}.rm-saved b{color:#fff}
+.rm-saved.out{opacity:0;transform:translateY(-6px)}
+@keyframes rmsv{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.rm-sheet.rm-slide>*,.rm-saved,#rm-next.ok{animation:none!important}}
 </style>
 
 <section class="landing" id="landing" hidden>
@@ -1592,9 +1609,11 @@ V.registroMovil=()=>{const m=REG.m,N=ROWS.length;
     const prevI=[...Array(m).keys()].reverse().find(i=>isSet(r.m[i]));
     const hist=r.m.slice(0,m).filter(x=>isSet(x)&&+x>0).map(Number);const avg=hist.length?hist.reduce((a,b)=>a+b,0)/hist.length:null;
     const needEv=r.req&&!r.na[m];
-    sheet=`<div class="rm-scrim" data-mclose></div><section class="rm-sheet" role="dialog" aria-modal="true" aria-labelledby="rm-sq">
+    const sv=REG.saved;sheet=`<div class="rm-scrim${sv?' still':''}" data-mclose></div><section class="rm-sheet${sv?' rm-slide':''}" role="dialog" aria-modal="true" aria-labelledby="rm-sq">
+      ${sv?`<div class="rm-saved" role="status">${ic('check')}<span><b>${esc(sv.t)}</b>${esc(sv.d)}</span></div>`:''}
       <div class="rm-grip" data-mclose aria-hidden="true"></div>
       <div class="rm-sh"><span>${esc(r.src)} · ${REG.i+1} de ${N}</span><button type="button" class="iconbtn" data-mclose aria-label="Cerrar">${ic('x')}</button></div>
+      <div class="rm-prog" aria-hidden="true">${ROWS.map((q,i)=>`<i class="${has(q,m)?'d':''}${i===REG.i?' c':''}"></i>`).join('')}</div>
       <h2 id="rm-sq">${esc(r.q)}</h2>
       <details class="rm-guide"><summary>¿Qué dato va aquí?</summary><p>${esc(r.guide)}</p></details>
       ${r.na[m]?`<div class="rm-na">${ic('check')}<div><b>Sin actividad en ${MESL[m].toLowerCase()}</b><small>No hubo consumo ni compra. No necesita foto.</small></div><button type="button" class="btn sm" id="rm-zero">Deshacer</button></div>`:`
@@ -1619,7 +1638,7 @@ V.registroMovil=()=>{const m=REG.m,N=ROWS.length;
 function bindRegMovil(){const m=REG.m;
   const mo=$('.rm-mo.on');if(mo)mo.parentElement.scrollLeft=mo.offsetLeft-mo.parentElement.clientWidth/2+mo.offsetWidth/2;
   const open=i=>{REG.i=i;REG.sh=true;document.body.classList.add('rm-lock');rerender();const v=$('#rm-v');if(v&&!isSet(ROWS[i].m[m]))v.focus()};
-  const close=()=>{REG.sh=false;document.body.classList.remove('rm-lock');rerender()};
+  const close=()=>{REG.saved=null;REG.sh=false;document.body.classList.remove('rm-lock');rerender()};
   $$('[data-mm]').forEach(b=>b.onclick=()=>{REG.m=+b.dataset.mm;REG.sh=false;rerender()});
   $$('[data-mq]').forEach(b=>b.onclick=()=>open(+b.dataset.mq));
   const go=$('#rm-go');if(go)go.onclick=()=>{const n=ROWS.findIndex(q=>!has(q,m));open(n<0?0:n)};
@@ -1629,11 +1648,12 @@ function bindRegMovil(){const m=REG.m;
   $$('[data-mclose]').forEach(e=>e.onclick=()=>{save();close()});
   if(inp){inp.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();$('#rm-next').click()}}}
   $$('[data-mph]').forEach(fi=>fi.onchange=()=>{const f=fi.files[0];if(!f)return;save();const k=r.id+':'+m;if(f.type.startsWith('image/'))REG.ph[k]=URL.createObjectURL(f);r.ev[m]=1;r.evn[m]=f.name;dirty=true;toast('Factura adjunta');rerender()});
-  $('#rm-zero').onclick=()=>{r.na[m]=r.na[m]?0:1;if(r.na[m])r.m[m]=null;dirty=true;if(r.na[m]){toast(`Sin actividad en ${MESL[m].toLowerCase()}`);nextQ()}else rerender()};
-  const nextQ=()=>{const k=ROWS.findIndex((q,i)=>i>REG.i&&!has(q,m)),k2=ROWS.findIndex(q=>!has(q,m));const n=k>=0?k:k2;if(n<0){REG.sh=false;document.body.classList.remove('rm-lock');toast(`${MESL[m]} completo. ¡Gracias!`);rerender();scrollTo(0,0)}else{REG.i=n;rerender();$('#rm-v')?.focus()}};
+  $('#rm-zero').onclick=()=>{r.na[m]=r.na[m]?0:1;if(r.na[m])r.m[m]=null;dirty=true;if(r.na[m]){done('Guardado',' · Sin actividad en '+MESL[m].toLowerCase())}else rerender()};
+  const nextQ=()=>{const k=ROWS.findIndex((q,i)=>i>REG.i&&!has(q,m)),k2=ROWS.findIndex(q=>!has(q,m));const n=k>=0?k:k2;if(n<0){REG.sh=false;document.body.classList.remove('rm-lock');toast(`${MESL[m]} completo. ¡Gracias!`);rerender();scrollTo(0,0)}else{REG.i=n;rerender();$('#rm-v')?.focus();clearTimeout(REG.svT);REG.svT=setTimeout(()=>{REG.saved=null;const s=$('.rm-saved');if(s)s.classList.add('out')},1800)}};
+  const done=(t,d)=>{const b=$('#rm-next');if(b){b.disabled=true;b.classList.add('ok');b.innerHTML=`${ic('check')}Guardado`}const sh=$('.rm-sheet');if(sh)sh.classList.add('leaving');REG.saved={t,d};setTimeout(nextQ,520)};
   $('#rm-next').onclick=()=>{if(!save())return;if(inp&&!isSet(r.m[m])){toast('Escribe el dato o marca Sin actividad');inp.focus();return}
     if(r.req&&isSet(r.m[m])&&+r.m[m]>0&&!r.ev[m]&&!REG.asked[r.id+':'+m]){REG.asked[r.id+':'+m]=1;toast('Falta la foto del recibo. Puedes tomarla ahora o después.');rerender();return}
-    nextQ()};
+    done('Guardado',` · ${fmtV(r.m[m])} ${r.u} en ${MESL[m].toLowerCase()}`)};
 }
 const isSet=v=>v!=null&&v!=='';
 const fmtV=v=>isSet(v)?nf2.format(+v).replace(/,00$/,''):'—';
