@@ -1236,6 +1236,36 @@ input[type=checkbox]:not(.switch input):not(.chk input):not([hidden]):focus-visi
 .ev-seg button .ic{width:13px;height:13px}.ev-seg button.on{background:#0d1b33;color:#fff}.ev-seg button+button{border-left:1px solid var(--line-strong)}
 .qa-na{width:auto!important;font-size:.76rem;padding:0 10px}
 @media (max-width:640px){.qa-li{flex-wrap:wrap;padding:4px 6px 6px}.qa-li label,.qa-li .qa-one{flex-basis:100%}.qa-li .ev-seg{margin-left:auto}.qa-lh>span:last-child{display:none}}
+
+/* Bloques de preguntas v64 */
+.qb{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:0 1px 2px rgba(8,17,32,.04);transition:border-color .15s,box-shadow .15s}
+.qb.yes{border-color:#e7cf7d;box-shadow:inset 3px 0 0 var(--pnb-gold-500,#c9a227)}
+.qb.no .qb-t h3{color:var(--muted);font-weight:600}.qb.no .qb-t p{display:none}
+.qb-h{display:flex;align-items:center;gap:14px;padding:14px 12px 14px 20px}
+.qb-t{flex:1;min-width:0}.qb-t h3{margin:0;font-size:.98rem;display:flex;align-items:center;gap:8px;flex-wrap:wrap}.qb-t p{margin:2px 0 0;font-size:.8rem;color:var(--muted)}
+.qb-sug{font-size:.66rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border-radius:999px;background:#fbf1cf;color:#7a5c00}
+.qb-yn{display:flex;flex:none;padding:3px;gap:3px;border-radius:999px;background:var(--surface2)}
+.qb-yn button{border:0;background:transparent;font:inherit;font-size:.86rem;font-weight:700;min-width:58px;padding:7px 14px;border-radius:999px;color:var(--muted);cursor:pointer}
+.qb-yn button:hover{color:var(--fg)}
+.qb-yn button.on:first-child{background:var(--pnb-gold-500,#c9a227);color:#0d1b33;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.qb-yn button.on:last-child{background:#0d1b33;color:#fff}
+.qb-yn button:focus-visible{outline:2px solid var(--focus,#4c8bf5);outline-offset:1px}
+.qb .kb-w{position:relative;flex:none}.qb .kb-m{left:auto!important;right:0!important;z-index:20}
+.qb-b{padding:0 12px 12px 20px}
+.qb-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0 8px;border-top:1px solid var(--line);font-size:.8rem;color:var(--muted)}
+.qb-bar>span{display:inline-flex;align-items:center;gap:5px}.qb-bar b{color:var(--fg)}.qb-bar i{font-style:normal;margin:0 2px}.qb-bar .ic{width:14px;height:14px}
+.qb-all{display:inline-flex;gap:2px}.qb-all button{border:0;background:none;font:inherit;font-size:.78rem;font-weight:600;color:var(--fg-2,var(--fg));padding:4px 8px;border-radius:6px;cursor:pointer}.qb-all button:hover:not(:disabled){background:var(--surface2)}.qb-all button:disabled{opacity:.4;cursor:default}
+.qb-l{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.qb-r{display:flex;align-items:center;gap:10px;min-height:40px;padding:0 0 0 2px;border-top:1px solid var(--line)}.qb-r:first-child{border-top:0}
+.qb-c{flex:1;min-width:0;display:flex;align-items:center;gap:10px;font-size:.86rem;cursor:pointer;padding:6px 0}.qb-c input{margin:0;flex:none}
+.qb-r:not(.on) .qb-c span{color:var(--muted)}
+.qb-ev{flex:none;display:inline-flex;align-items:center;gap:5px;font:inherit;font-size:.74rem;font-weight:600;padding:4px 10px;border-radius:999px;border:1px solid var(--line-strong);background:transparent;color:var(--muted);cursor:pointer}
+.qb-ev .ic{width:13px;height:13px}.qb-ev.on{background:#0d1b33;border-color:#0d1b33;color:#fff}.qb-ev:not(.on) .ic{opacity:.5}
+.qb-r .kb{width:28px;height:28px;opacity:.55}.qb-r:hover .kb,.qb-r .kb[aria-expanded="true"]{opacity:1}
+.qb-more{margin-top:6px;border:0;background:var(--surface2);font:inherit;font-size:.8rem;font-weight:600;color:var(--fg);padding:7px 12px;border-radius:8px;cursor:pointer;width:100%}
+.qb-empty{margin:0;padding:12px;border-radius:10px;background:var(--surface2);font-size:.82rem;color:var(--muted);text-align:center}
+.qa-addsec{border-style:solid!important;background:var(--surface2)!important}
+@media (max-width:640px){.qb-h{flex-wrap:wrap;padding:12px 10px 12px 14px}.qb-t{flex-basis:calc(100% - 44px)}.qb-yn{order:3;margin-left:0}.qb-b{padding:0 10px 10px 14px}.qb-r{gap:6px}.qb-ev{padding:6px 8px}.qb-ev span{display:none}.qb-ev .ic{width:15px;height:15px}.qb-bar{flex-wrap:wrap}}
 </style>
 
 <section class="landing" id="landing" hidden>
@@ -1732,12 +1762,24 @@ V.preguntas=()=>{
     </div>
     <div class="m1-foot"><span class="note">${cur&&M.resp?`Se creará la medición <b>${M.vig}</b> de <b>${esc(cur.k)}</b>, a cargo de <b>${esc(M.resp)}</b>.`:'Completa la sede y quién llena los datos para continuar.'}</span><button class="btn primary" id="q-next" type="button" ${cur&&M.resp?'':'disabled'}>Continuar · qué hay en la sede</button></div>`})():
   qStep===3?qConfirm():(()=>{const resp=qMeta.resp||'Jorge Ruiz';const first=resp.split(' ')[0];
-    const card=g=>{const gi=qState.indexOf(g),P=QPLAIN[g.s]||[title(g.s),''],n=g.q.filter(q=>q.on).length,yes=g.yes;
-      return `<article class="qa ${yes===true?'yes':yes===false?'no':''}">
-        <div class="qa-h"><div><h3>${P[0]}</h3><p>${P[1]}</p>${g.sug&&g.yes==null?'<span class="qa-sug">En sedes agropecuarias suele ser Sí</span>':''}</div>
-        <div class="yn-w">${yes==null?'<span class="yn-q">Sin responder</span>':''}<button type="button" class="yn-sw ${yes===true?'on':yes===false?'off':'unset'}" role="switch" aria-checked="${yes===true}" aria-label="${esc(P[0])}" data-yt="${gi}"><span class="yn-s">Sí</span><span class="yn-n">No</span><i></i></button><span class="kb-w"><button type="button" class="kb" data-qkb="q${gi}" aria-haspopup="menu" aria-expanded="${CFG.kb===('q'+gi)}" aria-label="Acciones del bloque">⋮</button>${CFG.kb===('q'+gi)?`<div class="kb-m" role="menu"><button type="button" role="menuitem" data-qadd="${gi}">Agregar pregunta</button><button type="button" role="menuitem" data-qren="${gi}">Renombrar bloque</button><button type="button" role="menuitem" class="del" data-qdel="${gi}">Eliminar bloque</button></div>`:''}</span></div></div>
-        ${yes?`<div class="qa-d"><span>${first} responderá <b>${n} pregunta${n===1?'':'s'}</b> cada mes</span><span class="qa-evs">${ic('camera')}<b>${g.q.filter(q=>q.on&&q.ev).length}</b> de ${n} piden factura</span><button type="button" class="lnk" data-qo="${gi}">${g.open?'Listo':'Elegir preguntas y evidencia'}</button></div>
-          ${g.open?`<div class="qa-l"><div class="qa-lh"><span>Pregunta${g.q.length>1?` <span class="qa-tn"><button type="button" class="lnk" data-qall="${gi}">Incluir todas</button> · <button type="button" class="lnk" data-qnone="${gi}">Quitar todas</button></span>`:''}</span><span>Soporte que se sube cada mes</span></div>${g.q.map((q,qi)=>{const k='p'+gi+'-'+qi;return `<div class="qa-li${q.on?' on':''}">${g.q.length>1?`<label><input type="checkbox" data-q="${gi}-${qi}" ${q.on?'checked':''}> ${esc(qClean(q.t))}</label>`:`<span class="qa-one">${esc(qClean(q.t))}</span>`}${q.on?`<div class="ev-seg" role="radiogroup" aria-label="Soporte mensual"><button type="button" role="radio" aria-checked="${q.ev}" class="${q.ev?'on':''}" data-qev="${gi}-${qi}" data-v="1">${ic('camera')}Con factura</button><button type="button" role="radio" aria-checked="${!q.ev}" class="${q.ev?'':'on'}" data-qev="${gi}-${qi}" data-v="0">Sin factura</button></div>`:'<span class="qa-na">No se pregunta</span>'}<span class="kb-w"><button type="button" class="kb" data-qkb="${k}" aria-haspopup="menu" aria-expanded="${CFG.kb===k}" aria-label="Acciones de la pregunta">⋮</button>${CFG.kb===k?`<div class="kb-m" role="menu"><button type="button" role="menuitem" data-pedit="${gi}-${qi}">Editar pregunta</button><button type="button" role="menuitem" class="del" data-pdel="${gi}-${qi}">Eliminar pregunta</button></div>`:''}</span></div>`}).join('')||'<p class="note" style="margin:6px 8px">Este bloque no tiene preguntas. Usa ⋮ › Agregar pregunta.</p>'}</div>`:`<div class="qa-chips">${g.q.filter(q=>q.on).slice(0,4).map(q=>`<span>${esc(qClean(q.t))}</span>`).join('')}${n>4?`<span>+${n-4} más</span>`:''}</div>`}`:''}
+    const card=g=>{const gi=qState.indexOf(g),P=QPLAIN[g.s]||[title(g.s),''],n=g.q.filter(q=>q.on).length,yes=g.yes,multi=g.q.length>1,ne=g.q.filter(q=>q.on&&q.ev).length,LIM=5;
+      const kb=(k,items,lbl)=>`<span class="kb-w"><button type="button" class="kb" data-qkb="${k}" aria-haspopup="menu" aria-expanded="${CFG.kb===k}" aria-label="${lbl}">⋮</button>${CFG.kb===k?`<div class="kb-m" role="menu">${items}</div>`:''}</span>`;
+      const rows=g.q.map((q,qi)=>({q,qi})).filter((x,i)=>g.open||g.q.length<=LIM+1||i<LIM);
+      return `<article class="qb ${yes===true?'yes':yes===false?'no':'pend'}">
+        <header class="qb-h">
+          <div class="qb-t"><h3>${esc(P[0])}${g.sug&&yes==null?'<span class="qb-sug">Sugerido</span>':''}</h3>${P[1]?`<p>${esc(P[1])}</p>`:''}</div>
+          <div class="qb-yn" role="radiogroup" aria-label="${esc(P[0])}"><button type="button" role="radio" aria-checked="${yes===true}" class="${yes===true?'on':''}" data-yv="${gi}:1">Sí</button><button type="button" role="radio" aria-checked="${yes===false}" class="${yes===false?'on':''}" data-yv="${gi}:0">No</button></div>
+          ${kb('q'+gi,`<button type="button" role="menuitem" data-qadd="${gi}">Agregar pregunta</button><button type="button" role="menuitem" data-qren="${gi}">Renombrar bloque</button><button type="button" role="menuitem" class="del" data-qdel="${gi}">Eliminar bloque</button>`,'Acciones del bloque')}
+        </header>
+        ${yes?`<div class="qb-b">
+          <div class="qb-bar"><span><b>${n}</b>${multi?` de ${g.q.length}`:''} pregunta${(multi?g.q.length:n)===1?'':'s'} al mes <i>·</i> ${ic('camera')}<b>${ne}</b> con factura</span>${multi?`<span class="qb-all"><button type="button" data-qall="${gi}" ${n===g.q.length?'disabled':''}>Todas</button><button type="button" data-qnone="${gi}">Ninguna</button></span>`:''}</div>
+          ${g.q.length?`<ul class="qb-l">${rows.map(({q,qi})=>`<li class="qb-r${q.on?' on':''}">
+            ${multi?`<label class="qb-c"><input type="checkbox" data-q="${gi}-${qi}" ${q.on?'checked':''}><span>${esc(qClean(q.t))}</span></label>`:`<span class="qb-c"><span>${esc(qClean(q.t))}</span></span>`}
+            ${q.on?`<button type="button" class="qb-ev${q.ev?' on':''}" data-qev="${gi}-${qi}" data-v="${q.ev?0:1}" aria-pressed="${q.ev}" title="${q.ev?'Cada mes debe subir la factura. Clic para no pedirla':'No pide factura. Clic para pedirla'}">${ic('camera')}<span>${q.ev?'Factura':'Sin factura'}</span></button>`:''}
+            ${kb('p'+gi+'-'+qi,`<button type="button" role="menuitem" data-pedit="${gi}-${qi}">Editar pregunta</button><button type="button" role="menuitem" class="del" data-pdel="${gi}-${qi}">Eliminar pregunta</button>`,'Acciones de la pregunta')}
+          </li>`).join('')}</ul>`:`<p class="qb-empty">Sin preguntas todavía. Usa ⋮ › Agregar pregunta.</p>`}
+          ${g.q.length>LIM+1?`<button type="button" class="qb-more" data-qo="${gi}">${g.open?'Ver menos':`Ver las ${g.q.length} preguntas`}</button>`:''}
+        </div>`:''}
       </article>`};
     const pend=qState.filter(g=>g.yes==null).length;
     const tot=qState.length,done=tot-pend,ny=qState.filter(g=>g.yes).length;
@@ -1748,16 +1790,16 @@ V.preguntas=()=>{
         <div class="qa-k"><b>${ny}</b><span>con Sí · ${done-ny} con No</span></div>
         <div class="qa-acts">${qState.some(g=>g.yes==null&&g.sug)?`<button type="button" class="btn" id="q-sug">Usar lo sugerido</button>`:''}<button class="btn" id="q-back" type="button">Atrás</button><button class="btn primary" id="q-ok" type="button" ${pend?'disabled':''} title="${pend?`Faltan ${pend} por responder`:''}">Revisar y confirmar</button></div>
       </section>
-      <p class="qa-help"><b>Sí/No</b> decide si a ${esc(resp)} se le pregunta cada mes. <b>Con factura / Sin factura</b> solo decide si además debe subir el soporte.</p>
+      <p class="qa-help">Di <b>Sí</b> a lo que existe en la sede. Solo eso le aparece a ${esc(resp)} cada mes.</p>
       ${(()=>{const F=REGF,any=F.qsec.length||F.qq.length||F.qpend,secOk=gt=>!F.qsec.length||F.qsec.includes(gt);
         const qopts=QGROUPS.filter(([gt])=>secOk(gt)).flatMap(([gt,keys])=>keys.filter(k=>qState.some(g=>g.s===k)).map(k=>[k,(QPLAIN[k]||[title(k)])[0]]));
         const bar=`<div class="regf qa-f${any?' on':''}"><span class="regf-t" title="Filtros">${ic('filter')}</span>
           <div class="ms-l"><span>Sección</span>${MSEL('qsec',QGROUPS.map(([gt])=>[gt,gt]))}</div>
           <div class="ms-l"><span>Pregunta</span>${MSEL('qq',qopts)}</div>
           <span class="regf-sep"></span>
-          <label class="chk w" title="Sin responder"><input type="checkbox" data-qpend ${F.qpend?'checked':''}><i></i><span class="chk-tx">Sin responder</span><b>${pend}</b></label>
+          <label class="chk w" title="Pendientes"><input type="checkbox" data-qpend ${F.qpend?'checked':''}><i></i><span class="chk-tx">Pendientes</span><b>${pend}</b></label>
           ${any?`<button type="button" class="lnk-calc" data-qf-clear>Limpiar</button>`:''}</div>`;
-        const body=QGROUPS.filter(([gt])=>secOk(gt)).map(([gt,keys])=>{const gs=keys.map(k=>qState.find(g=>g.s===k)).filter(g=>g&&(!F.qq.length||F.qq.includes(g.s))&&(!F.qpend||g.yes==null));const gx=QGROUPS.findIndex(x=>x[0]===gt);return (gs.length||!(F.qq.length||F.qpend))?`<div class="qa-gh"><h2 class="qa-gt">${esc(gt)}</h2><span class="kb-w"><button type="button" class="kb" data-qkb="g${gx}" aria-haspopup="menu" aria-expanded="${CFG.kb===('g'+gx)}" aria-label="Acciones de la sección">⋮</button>${CFG.kb===('g'+gx)?`<div class="kb-m" role="menu"><button type="button" role="menuitem" data-gadd="${gx}">Agregar bloque de preguntas</button><button type="button" role="menuitem" data-gren="${gx}">Renombrar sección</button><button type="button" role="menuitem" class="del" data-gdel="${gx}">Eliminar sección</button></div>`:''}</span></div>${gs.map(card).join('')||'<p class="note qa-empty">Sección vacía. Usa ⋮ › Agregar bloque de preguntas.</p>'}`:''}).join('')+`<button type="button" class="qa-addsec" id="q-addsec">${ic('plus')}Agregar sección</button>`;
+        const body=QGROUPS.filter(([gt])=>secOk(gt)).map(([gt,keys])=>{const gs=keys.map(k=>qState.find(g=>g.s===k)).filter(g=>g&&(!F.qq.length||F.qq.includes(g.s))&&(!F.qpend||g.yes==null));const gx=QGROUPS.findIndex(x=>x[0]===gt);return (gs.length||!(F.qq.length||F.qpend))?`<div class="qa-gh"><h2 class="qa-gt">${esc(gt)}</h2><span class="kb-w"><button type="button" class="kb" data-qkb="g${gx}" aria-haspopup="menu" aria-expanded="${CFG.kb===('g'+gx)}" aria-label="Acciones de la sección">⋮</button>${CFG.kb===('g'+gx)?`<div class="kb-m" role="menu"><button type="button" role="menuitem" data-gadd="${gx}">Agregar bloque de preguntas</button><button type="button" role="menuitem" data-gren="${gx}">Renombrar sección</button><button type="button" role="menuitem" class="del" data-gdel="${gx}">Eliminar sección</button></div>`:''}</span></div>${gs.map(card).join('')||'<p class="qb-empty">Sección vacía. Usa ⋮ › Agregar bloque de preguntas.</p>'}`:''}).join('')+`<button type="button" class="qa-addsec" id="q-addsec">${ic('plus')}Agregar sección</button>`;
         return bar+(body||`<p class="note" style="padding:24px;text-align:center">Nada coincide con los filtros. <button type="button" class="lnk-calc" data-qf-clear>Limpiar</button></p>`)})()}
     </div>`})()}`;
 };
@@ -1783,6 +1825,8 @@ const QGROUPS=[['Energía y combustibles',['ENERGIA ELECTRICA','COMBUSTIBLES LIQ
  ['Campo y animales',['FERMENTACIÓN ENTERICA','MANEJO DE ESTIERCOL','USO DE FERTILIZANTES','CAL Y UREA APLICADA COMO FERTILIZANTE','TRATAMIENTO Y GESTION DE RESIDUOS AGRICOLAS']]];
 const qClean=s=>s.replace(/\s+-\s+[A-Za-zÁÉÍÓÚáéíóú ]+$/,'').replace(/\s+/g,' ').replace(/\s+\?/,'?').trim();
 function bindPreguntas(){
+  $$('[data-yv]').forEach(b=>b.onclick=()=>{const [gi,v]=b.dataset.yv.split(':');const g=qState[+gi],want=v==='1';if(g.yes===want)return;
+    g.yes=want;if(want){if(!g.q.some(q=>q.on)){if(g.q.some(q=>q.sg))g.q.forEach(q=>q.on=q.sg);else g.q.forEach(q=>q.on=true)}}else{g.q.forEach(q=>q.on=false);g.open=false}rerender()});
   $$('[data-yt]').forEach(b=>b.onclick=()=>{const g=qState[+b.dataset.yt];g.yes=g.yes!==true;if(g.yes){if(!g.q.some(q=>q.on)){if(g.q.some(q=>q.sg))g.q.forEach(q=>q.on=q.sg);else if(g.q.length<=3)g.q.forEach(q=>q.on=true);else if(g.q.length){g.q[0].on=true;g.open=true}else g.open=true}}else{g.q.forEach(q=>q.on=false);g.open=false}rerender()});
   const qs=$('#q-sug');if(qs)qs.onclick=()=>{qState.forEach(g=>{if(g.yes==null&&g.sug){g.yes=true;g.q.forEach(q=>q.on=q.sg)}});rerender()};
   $$('[data-qev]').forEach(b=>b.onclick=()=>{const [g,q]=b.dataset.qev.split('-').map(Number);const x=qState[g].q[q];x.ev=b.dataset.v==='1';rerender()});
