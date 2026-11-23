@@ -1211,6 +1211,14 @@ input[type=checkbox]:not(.switch input):not(.chk input):not([hidden]):focus-visi
 .cf-ic{display:inline-grid;place-items:center;width:56px;height:56px;border-radius:50%;background:var(--pnb-gold-500,#c9a227);color:#0d1b33}.cf-ic .ic{width:28px;height:28px}
 
 .qa-f{margin-top:0}
+
+.qa-evs{display:inline-flex;align-items:center;gap:5px;font-size:.8rem;color:var(--muted)}.qa-evs .ic{width:14px;height:14px}.qa-evs b{color:var(--fg)}
+.qa-l{display:flex!important;flex-direction:column;gap:4px!important}
+.qa-lh{display:flex;justify-content:space-between;font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700;padding:0 8px 2px}
+.qa-li{display:flex;align-items:center;gap:12px;border-radius:8px;border:1px solid transparent;padding-right:8px}.qa-li label{flex:1;min-width:0;border:0!important;background:none!important}
+.qa-li.on{background:#fbf1cf55;border-color:#ecd68a}.qa-na{width:74px;text-align:center;color:var(--muted)}
+.yn-sw.sm{transform:scale(.82);transform-origin:right center;flex:none}
+.cf-evn{display:inline-flex;align-items:center;gap:3px;font-size:1rem!important;font-weight:700!important;color:var(--fg)!important}.cf-evn .ic{width:14px;height:14px}
 </style>
 
 <section class="landing" id="landing" hidden>
@@ -1678,7 +1686,7 @@ function qConfirm(){const M=qMeta,on=qState.flatMap(g=>g.q).filter(q=>q.on).leng
     <section class="m1"><div class="m1-h"><span class="m1-n">1</span><h3>La medición</h3><button type="button" class="lnk cf-ed" data-qgo="1">Cambiar</button></div>
       <dl class="cf-dl"><dt>Sede</dt><dd>${esc(M.sede)}</dd><dt>Año</dt><dd>${M.vig}</dd><dt>Tipo</dt><dd>${M.tipo} · sede ${M.ts.toLowerCase()}</dd><dt>Llena los datos</dt><dd>${esc(M.resp)}</dd></dl></section>
     <section class="m1"><div class="m1-h"><span class="m1-n">2</span><h3>Lo que hay en la sede</h3><button type="button" class="lnk cf-ed" data-qgo="2">Cambiar</button></div>
-      <div class="cf-big"><b>${on}</b><span>preguntas cada mes</span></div>
+      <div class="cf-big"><b>${on}</b><span>preguntas cada mes · <b class="cf-evn">${ic('camera')}${qState.flatMap(g=>g.q).filter(q=>q.on&&q.ev).length}</b> piden factura</span></div>
       <div class="cf-yes">${ys.map(g=>`<span>${esc(nm(g))} <b>${g.q.filter(q=>q.on).length}</b></span>`).join('')}</div>
       ${ns.length?`<div class="cf-nol">No aplica · ${ns.reduce((a,g)=>a+g.q.length,0)} preguntas que no se harán</div><div class="cf-yes cf-no">${ns.map(g=>`<span>${esc(nm(g))} <b>${g.q.length}</b></span>`).join('')}</div>`:''}</section>
     <section class="m1 cf-next"><div class="m1-h"><span class="m1-n">3</span><h3>Qué pasa al crear</h3></div>
@@ -1690,7 +1698,7 @@ let _qs=null;const qSedes=()=>_qs||(_qs=TREE.flatMap(r=>r.ch.flatMap(c=>c.ch.map
 V.preguntas=()=>{
   if(!TRAZA){loadTraza().then(render);return '<div class="panel">Cargando preguntas…</div>'}
   if(!qState){const by={};const agro=new Set();TRAZA.forEach(x=>{(by[x[3]]=by[x[3]]||new Set()).add(x[4]);if(/agrop|granja|agro/i.test(x[2]))agro.add(x[4])});
-    qState=Object.entries(by).map(([s,qs])=>{const q=[...qs].sort().map(q=>({t:q,on:false,sg:agro.has(q)}));const sug=q.some(x=>x.sg);return {s,q,sug,yes:null,open:false}})}
+    qState=Object.entries(by).map(([s,qs])=>{const q=[...qs].sort().map(q=>({t:q,on:false,sg:agro.has(q),ev:true}));const sug=q.some(x=>x.sg);return {s,q,sug,yes:null,open:false}})}
   const all=qState.flatMap(g=>g.q),on=all.filter(q=>q.on).length,srcOn=qState.filter(g=>g.q.some(q=>q.on)).length;
   return `<div class="pagehead"><div><div class="crumb">Captura · Nueva medición</div><h1>Preguntas que aplican</h1><p>Responde Sí o No a lo que hay en la sede. Con eso armamos las preguntas que verá cada mes quien captura.</p></div>
   <div class="stepper"><span class="${qStep===1?'on':''}">1 · Sede y vigencia</span><span class="${qStep===2?'on':''}">2 · Qué hay en la sede</span><span class="${qStep===3?'on':''}">3 · Confirmar</span></div></div>
@@ -1711,8 +1719,8 @@ V.preguntas=()=>{
       return `<article class="qa ${yes===true?'yes':yes===false?'no':''}">
         <div class="qa-h"><div><h3>${P[0]}</h3><p>${P[1]}</p>${g.sug&&g.yes==null?'<span class="qa-sug">En sedes agropecuarias suele ser Sí</span>':''}</div>
         <div class="yn-w">${yes==null?'<span class="yn-q">Sin responder</span>':''}<button type="button" class="yn-sw ${yes===true?'on':yes===false?'off':'unset'}" role="switch" aria-checked="${yes===true}" aria-label="${esc(P[0])}" data-yt="${gi}"><span class="yn-s">Sí</span><span class="yn-n">No</span><i></i></button></div></div>
-        ${yes?`<div class="qa-d"><span>${first} responderá <b>${n} pregunta${n===1?'':'s'}</b> cada mes${g.q.length>1?':':''}</span>${g.q.length>1?`<button type="button" class="lnk" data-qo="${gi}">${g.open?'Listo':'Elegir cuáles'}</button>`:''}</div>
-          ${g.open?`<div class="qa-l">${g.q.map((q,qi)=>`<label><input type="checkbox" data-q="${gi}-${qi}" ${q.on?'checked':''}> ${esc(qClean(q.t))}</label>`).join('')}</div>`:`<div class="qa-chips">${g.q.filter(q=>q.on).slice(0,4).map(q=>`<span>${esc(qClean(q.t))}</span>`).join('')}${n>4?`<span>+${n-4} más</span>`:''}</div>`}`:''}
+        ${yes?`<div class="qa-d"><span>${first} responderá <b>${n} pregunta${n===1?'':'s'}</b> cada mes</span><span class="qa-evs">${ic('camera')}<b>${g.q.filter(q=>q.on&&q.ev).length}</b> de ${n} piden factura</span><button type="button" class="lnk" data-qo="${gi}">${g.open?'Listo':'Elegir preguntas y evidencia'}</button></div>
+          ${g.open?`<div class="qa-l"><div class="qa-lh"><span>Pregunta</span><span>¿Pide factura cada mes?</span></div>${g.q.map((q,qi)=>`<div class="qa-li${q.on?' on':''}"><label><input type="checkbox" data-q="${gi}-${qi}" ${q.on?'checked':''}> ${esc(qClean(q.t))}</label>${q.on?`<button type="button" class="yn-sw sm ${q.ev?'on':'off'}" role="switch" aria-checked="${q.ev}" aria-label="Requiere evidencia" data-qev="${gi}-${qi}"><span class="yn-s">Sí</span><span class="yn-n">No</span><i></i></button>`:'<span class="qa-na">—</span>'}</div>`).join('')}</div>`:`<div class="qa-chips">${g.q.filter(q=>q.on).slice(0,4).map(q=>`<span>${esc(qClean(q.t))}</span>`).join('')}${n>4?`<span>+${n-4} más</span>`:''}</div>`}`:''}
       </article>`};
     const pend=qState.filter(g=>g.yes==null).length;
     const tot=qState.length,done=tot-pend,ny=qState.filter(g=>g.yes).length;
@@ -1723,7 +1731,7 @@ V.preguntas=()=>{
         <div class="qa-k"><b>${ny}</b><span>con Sí · ${done-ny} con No</span></div>
         <div class="qa-acts">${qState.some(g=>g.yes==null&&g.sug)?`<button type="button" class="btn" id="q-sug">Usar lo sugerido</button>`:''}<button class="btn" id="q-back" type="button">Atrás</button><button class="btn primary" id="q-ok" type="button" ${pend?'disabled':''} title="${pend?`Faltan ${pend} por responder`:''}">Revisar y confirmar</button></div>
       </section>
-      <p class="qa-help"><b>Marca lo que existe en esta sede.</b> Solo eso se le preguntará cada mes a ${esc(resp)}. Lo que marques “No” no aparece en su registro.</p>
+      <p class="qa-help"><b>Marca lo que existe en esta sede.</b> Solo eso se le preguntará cada mes a ${esc(resp)}. Lo que marques “No” no aparece en su registro. En <b>Elegir preguntas y evidencia</b> defines, pregunta por pregunta, si cada mes se debe subir la factura o soporte.</p>
       ${(()=>{const F=REGF,any=F.qsec.length||F.qq.length||F.qpend,secOk=gt=>!F.qsec.length||F.qsec.includes(gt);
         const qopts=QGROUPS.filter(([gt])=>secOk(gt)).flatMap(([gt,keys])=>keys.filter(k=>qState.some(g=>g.s===k)).map(k=>[k,(QPLAIN[k]||[title(k)])[0]]));
         const bar=`<div class="regf qa-f${any?' on':''}"><span class="regf-t" title="Filtros">${ic('filter')}</span>
@@ -1760,6 +1768,7 @@ const qClean=s=>s.replace(/\s+-\s+[A-Za-zÁÉÍÓÚáéíóú ]+$/,'').replace(/
 function bindPreguntas(){
   $$('[data-yt]').forEach(b=>b.onclick=()=>{const g=qState[+b.dataset.yt];g.yes=g.yes!==true;if(g.yes){if(!g.q.some(q=>q.on)){if(g.q.some(q=>q.sg))g.q.forEach(q=>q.on=q.sg);else if(g.q.length<=3)g.q.forEach(q=>q.on=true);else{g.q[0].on=true;g.open=true}}}else{g.q.forEach(q=>q.on=false);g.open=false}rerender()});
   const qs=$('#q-sug');if(qs)qs.onclick=()=>{qState.forEach(g=>{if(g.yes==null&&g.sug){g.yes=true;g.q.forEach(q=>q.on=q.sg)}});rerender()};
+  $$('[data-qev]').forEach(b=>b.onclick=()=>{const [g,q]=b.dataset.qev.split('-').map(Number);const x=qState[g].q[q];x.ev=!x.ev;rerender()});
   $$('[data-qpend]').forEach(c=>c.onchange=()=>{REGF.qpend=c.checked;rerender()});
   $$('[data-qf-clear]').forEach(b=>b.onclick=()=>{REGF.qsec=[];REGF.qq=[];REGF.qpend=false;rerender()});
   $$('[data-qo]').forEach(b=>b.onclick=()=>{const g=qState[+b.dataset.qo];g.open=!g.open;rerender()});
