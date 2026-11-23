@@ -1092,6 +1092,17 @@ body:has(.rm-cta) .toast{bottom:92px;z-index:95}body:has(.rm-sheet) .toast{botto
 .wf-sep{font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:10px 0 0}
 .wf-r.wf-x .wf-t i{background:var(--chart3)}
 @media (max-width:640px){.wf{gap:10px}.wf-r{grid-template-columns:1fr 70px;gap:2px 10px;font-size:.8rem}.wf-l{grid-column:1/-1;text-align:left}.wf-t{height:16px}.wf-r.tot .wf-t{height:20px}}
+
+/* filtros registro: una fila que se encoge */
+.regf{container-type:inline-size;min-width:0}
+.regf .ms-l{flex:1 1 0;min-width:72px}
+.regf>label:has(i):not(.chk){flex:0 1 auto;min-width:0;flex-wrap:nowrap}
+.regf>label:has(i):not(.chk)>span{width:auto;flex:none}
+.regf>label:has(i):not(.chk) select{min-width:58px;padding:0 6px}
+.regf>label:has(i):not(.chk){display:grid;grid-template-columns:1fr auto 1fr;column-gap:6px;row-gap:4px}
+.regf>label:has(i):not(.chk)>span{grid-column:1/-1}
+@container (max-width:700px){.regf .chk-tx{display:none}.regf .chk{padding:0 8px}}
+@container (max-width:640px){.regf-sep{display:none}}
 </style>
 
 <section class="landing" id="landing" hidden>
@@ -1357,8 +1368,8 @@ V.registroTabla=()=>{
     <div class="ms-l"><span>Pregunta</span>${MSEL('q',ROWS.filter(r=>!REGF.src.length||REGF.src.includes(r.src)).map(r=>[r.id,r.q]))}</div>
     <label><span>Meses</span><select data-regf="m0">${MES.map((m,i)=>`<option value="${i}" ${REGF.m0===i?'selected':''}>${m}</option>`).join('')}</select><i>a</i><select data-regf="m1">${MES.map((m,i)=>`<option value="${i}" ${REGF.m1===i?'selected':''}>${m}</option>`).join('')}</select></label>
     <span class="regf-sep"></span>
-    <label class="chk w"><input type="checkbox" data-regf-t="noev" ${REGF.noev?'checked':''}><i></i>Sin evidencia <b>${CNT('noev')}</b></label>
-    <label class="chk r"><input type="checkbox" data-regf-t="raro" ${REGF.raro?'checked':''}><i></i>Revisar <b>${CNT('alert')}</b></label>
+    <label class="chk w" title="Sin evidencia"><input type="checkbox" data-regf-t="noev" ${REGF.noev?'checked':''}><i></i><span class="chk-tx">Sin evidencia</span><b>${CNT('noev')}</b></label>
+    <label class="chk r" title="Revisar"><input type="checkbox" data-regf-t="raro" ${REGF.raro?'checked':''}><i></i><span class="chk-tx">Revisar</span><b>${CNT('alert')}</b></label>
     ${REGF.src.length||REGF.q.length||REGF.m0>0||REGF.m1<11||REGF.noev||REGF.raro?`<button type="button" class="lnk-calc" data-regf-clear>Limpiar</button>`:''}
   </div>
   <div class="reg-x"><div class="reg-in">${SRCS.filter(s=>!REGF.src.length||REGF.src.includes(s)).map(s=>{const rows=ROWS.filter(r=>r.src===s&&(!REGF.q.length||REGF.q.includes(r.id))&&(!(REGF.noev||REGF.raro)||MI().some(i=>WANT(rowState(r,i)))));if(!rows.length)return '';const done=rows.reduce((a,r)=>a+r.m.slice(0,10).filter((x,i)=>has(r,i)).length,0);const t=rows.reduce((a,r)=>a+calc(r).t,0);
