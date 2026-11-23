@@ -112,6 +112,16 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .fict{color:var(--orange);font-weight:700}
 .note{font-size:.75rem;color:var(--muted)}
 table{border-collapse:collapse;width:100%}
+table.tz{table-layout:fixed;min-width:980px;font-size:.86rem}
+table.tz td{vertical-align:top;padding-top:10px;padding-bottom:10px}
+table.tz tbody tr{cursor:pointer}
+table.tz th{white-space:nowrap}
+.tz col.c-se{width:22%}.tz col.c-pq{width:24%}.tz col.c-ac{width:14%}.tz col.c-fe{width:17%}.tz col.c-pc{width:8%}.tz col.c-t{width:8%}.tz col.c-u{width:7%}
+.tz .cl2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.35}
+.tz .cl1{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:3px}
+.tz .tz-g{display:inline-block;margin-top:4px;padding:1px 7px;border-radius:999px;background:var(--line);font-size:.72rem;color:var(--muted)}
+.tz .tz-u{font-size:.78rem;color:var(--muted)}
+.tz td.num .note{font-size:.72rem}
 th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
 th{font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:700;background:var(--surface2);position:sticky;top:0;z-index:1}
 tbody tr:hover td{background:var(--accent-soft)}
@@ -1975,8 +1985,8 @@ V.trazabilidad=()=>{
     <input id="tz-q" placeholder="Buscar sede, pregunta, actividad o gas…" value="${esc(tz.q)}" style="flex:1;min-width:200px;padding:7px 9px;border:1px solid var(--line);border-radius:6px;background:var(--surface)">
     <select id="tz-fu" style="padding:7px;border:1px solid var(--line);border-radius:6px;background:var(--surface);max-width:100%"><option value="">Todas las fuentes</option>${fus.map(f=>`<option ${f===tz.fu?'selected':''} value="${esc(f)}">${title(f)}</option>`).join('')}</select>
     <span class="note">${nf0.format(rows.length)} filas · <b class="mono">${t2(tot)} t CO2e</b></span></div>
-  <div class="scroll"><table><thead><tr><th>Sede</th><th>Pregunta</th><th>Actividad</th><th>Gas</th><th class="num">FE</th><th>Unidad FE</th><th>Fuente bibliográfica</th><th class="num">PCG</th><th class="num">t CO2e</th><th class="num">U dato</th><th class="num">U factor</th></tr></thead><tbody>
-  ${rows.slice(tz.pg*P,tz.pg*P+P).map(x=>{const f=FAC[x[10]]||{};return `<tr data-tz="${TRAZA.indexOf(x)}" style="cursor:pointer" tabindex="0"><td style="min-width:200px">${esc(x[2])}<div class="note">${esc(x[0])}</div></td><td style="min-width:220px">${esc(x[4])}</td><td>${esc(x[5])}</td><td>${esc(x[6])}</td><td class="num mono">${nfx.format(x[7])}</td><td class="mono" style="white-space:nowrap">${esc(f.u||'')}</td><td style="min-width:200px" class="note">${esc((f.src||'').slice(0,70))}${(f.src||'').length>70?'…':''}</td><td class="num mono">${nfx.format(x[8])}</td><td class="num mono"><b>${nf2.format(x[9])}</b></td><td class="num mono">${pct(x[11])}</td><td class="num mono">${f.sp!=null?pct(Math.max(f.ip,f.sp)):''}</td></tr>`}).join('')}
+  <div class="scroll"><table class="tz"><colgroup><col class="c-se"><col class="c-pq"><col class="c-ac"><col class="c-fe"><col class="c-pc"><col class="c-t"><col class="c-u"></colgroup><thead><tr><th>Sede</th><th>Pregunta</th><th>Actividad · gas</th><th>Factor de emisión</th><th class="num">PCG</th><th class="num">t CO2e</th><th class="num" title="Incertidumbre del dato y del factor">Incert.</th></tr></thead><tbody>
+  ${rows.slice(tz.pg*P,tz.pg*P+P).map(x=>{const f=FAC[x[10]]||{};return `<tr data-tz="${TRAZA.indexOf(x)}" tabindex="0"><td><div class="cl2" title="${esc(x[2])}">${esc(x[2])}</div><div class="note">${esc(x[0])}</div></td><td><div class="cl2" title="${esc(x[4])}">${esc(x[4])}</div></td><td><div class="cl2">${esc(x[5])}</div>${x[6].toLowerCase().replace(/[^a-z0-9]/g,'')!==x[5].toLowerCase().replace(/[^a-z0-9]/g,'')?`<span class="tz-g">${esc(x[6])}</span>`:''}</td><td><span class="mono">${nfx.format(x[7])}</span> <span class="tz-u">${esc(f.u||'')}</span><div class="note cl1" title="${esc(f.src||'')}">${esc(f.src||'')}</div></td><td class="num mono">${nfx.format(x[8])}</td><td class="num mono"><b>${nf2.format(x[9])}</b></td><td class="num mono">±${Math.round(x[11]*100)} %${f.sp!=null?`<div class="note">FE ±${Math.round(Math.max(f.ip,f.sp)*100)} %</div>`:''}</td></tr>`}).join('')}
   </tbody></table></div>
   <div class="toolbar" style="justify-content:space-between;margin-top:10px"><span class="note">Página ${tz.pg+1} de ${pages}. La exportación 2025 no trae el dato de actividad ni el mes; la app nueva los guarda en cada fila.</span><span class="toolbar"><button class="btn sm" id="tz-prev" type="button" ${tz.pg?'':'disabled'}>Anterior</button><button class="btn sm" id="tz-next" type="button" ${tz.pg<pages-1?'':'disabled'}>Siguiente</button></span></div></section>`;
 };
