@@ -1155,6 +1155,17 @@ body:has(.rm-cta) .toast{bottom:92px;z-index:95}body:has(.rm-sheet) .toast{botto
 .up-r{display:flex;align-items:center;gap:10px;padding:7px 8px;border-radius:8px;font-size:.88rem;cursor:pointer}
 .up-r:hover{background:var(--surface2)}.up-r span{flex:1}.up-r small{color:var(--muted);font-size:.72rem}
 .up-r.ch{background:#fbf1cf}.up-r em{font-style:normal;font-size:.74rem;font-weight:700;color:#7a5d00;white-space:nowrap}
+
+.yn-w{display:flex;align-items:center;gap:10px;flex:none}
+.yn-q{font-size:.74rem;font-weight:700;color:var(--muted)}
+.yn-sw{position:relative;width:86px;height:34px;border-radius:99px;border:0;padding:0;cursor:pointer;background:var(--pnb-navy-200);font:inherit;font-weight:800;font-size:.8rem;letter-spacing:.04em;transition:background .15s}
+.yn-sw i{position:absolute;top:4px;left:4px;width:26px;height:26px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:left .15s}
+.yn-sw span{position:absolute;top:50%;transform:translateY(-50%);transition:opacity .15s}
+.yn-s{left:14px;color:#0d1b33;opacity:0}.yn-n{right:14px;color:var(--pnb-navy-700,#2c4673)}
+.yn-sw.on{background:var(--pnb-gold-500,#c9a227)}.yn-sw.on i{left:56px}.yn-sw.on .yn-s{opacity:1}.yn-sw.on .yn-n{opacity:0}
+.yn-sw.unset{background:var(--surface2);outline:2px dashed var(--line-strong);outline-offset:-2px}.yn-sw.unset i{display:none}.yn-sw.unset span{opacity:.55}.yn-sw.unset .yn-s{opacity:.55}
+.yn-sw:focus-visible{box-shadow:0 0 0 3px var(--focus)}
+.qa.yes{border-left-color:var(--pnb-gold-500,#c9a227)!important}.qa:not(.yes):not(.no){border-left-color:var(--line-strong)!important;border-left-style:dashed}
 </style>
 
 <section class="landing" id="landing" hidden>
@@ -1634,7 +1645,7 @@ V.preguntas=()=>{
     const card=g=>{const gi=qState.indexOf(g),P=QPLAIN[g.s]||[title(g.s),''],n=g.q.filter(q=>q.on).length,yes=g.yes;
       return `<article class="qa ${yes===true?'yes':yes===false?'no':''}">
         <div class="qa-h"><div><h3>${P[0]}</h3><p>${P[1]}</p>${g.sug&&g.yes==null?'<span class="qa-sug">En sedes agropecuarias suele ser Sí</span>':''}</div>
-        <div class="qa-yn" role="radiogroup" aria-label="${esc(P[0])}"><button type="button" role="radio" aria-checked="${yes===true}" data-yn="${gi}|1">Sí</button><button type="button" role="radio" aria-checked="${yes===false}" data-yn="${gi}|0">No</button></div></div>
+        <div class="yn-w">${yes==null?'<span class="yn-q">Sin responder</span>':''}<button type="button" class="yn-sw ${yes===true?'on':yes===false?'off':'unset'}" role="switch" aria-checked="${yes===true}" aria-label="${esc(P[0])}" data-yt="${gi}"><span class="yn-s">Sí</span><span class="yn-n">No</span><i></i></button></div></div>
         ${yes?`<div class="qa-d"><span>${first} responderá <b>${n} pregunta${n===1?'':'s'}</b> cada mes${g.q.length>1?':':''}</span>${g.q.length>1?`<button type="button" class="lnk" data-qo="${gi}">${g.open?'Listo':'Elegir cuáles'}</button>`:''}</div>
           ${g.open?`<div class="qa-l">${g.q.map((q,qi)=>`<label><input type="checkbox" data-q="${gi}-${qi}" ${q.on?'checked':''}> ${esc(qClean(q.t))}</label>`).join('')}</div>`:`<div class="qa-chips">${g.q.filter(q=>q.on).slice(0,4).map(q=>`<span>${esc(qClean(q.t))}</span>`).join('')}${n>4?`<span>+${n-4} más</span>`:''}</div>`}`:''}
       </article>`};
@@ -1673,7 +1684,7 @@ const QGROUPS=[['Energía y combustibles',['ENERGIA ELECTRICA','COMBUSTIBLES LIQ
  ['Campo y animales',['FERMENTACIÓN ENTERICA','MANEJO DE ESTIERCOL','USO DE FERTILIZANTES','CAL Y UREA APLICADA COMO FERTILIZANTE','TRATAMIENTO Y GESTION DE RESIDUOS AGRICOLAS']]];
 const qClean=s=>s.replace(/\s+-\s+[A-Za-zÁÉÍÓÚáéíóú ]+$/,'').replace(/\s+/g,' ').replace(/\s+\?/,'?').trim();
 function bindPreguntas(){
-  $$('[data-yn]').forEach(b=>b.onclick=()=>{const [gi,v]=b.dataset.yn.split('|');const g=qState[+gi];g.yes=v==='1';if(g.yes){if(!g.q.some(q=>q.on)){if(g.q.some(q=>q.sg))g.q.forEach(q=>q.on=q.sg);else if(g.q.length<=3)g.q.forEach(q=>q.on=true);else{g.q[0].on=true;g.open=true}}}else{g.q.forEach(q=>q.on=false);g.open=false}rerender()});
+  $$('[data-yt]').forEach(b=>b.onclick=()=>{const g=qState[+b.dataset.yt];g.yes=g.yes!==true;if(g.yes){if(!g.q.some(q=>q.on)){if(g.q.some(q=>q.sg))g.q.forEach(q=>q.on=q.sg);else if(g.q.length<=3)g.q.forEach(q=>q.on=true);else{g.q[0].on=true;g.open=true}}}else{g.q.forEach(q=>q.on=false);g.open=false}rerender()});
   const qs=$('#q-sug');if(qs)qs.onclick=()=>{qState.forEach(g=>{if(g.yes==null&&g.sug){g.yes=true;g.q.forEach(q=>q.on=q.sg)}});rerender()};
   $$('[data-qo]').forEach(b=>b.onclick=()=>{const g=qState[+b.dataset.qo];g.open=!g.open;rerender()});
   $('#q-next')&&($('#q-next').onclick=()=>{qStep=2;render()});
