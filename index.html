@@ -1210,6 +1210,7 @@ input[type=checkbox]:not(.switch input):not(.chk input):not([hidden]):focus-visi
 .cf-ok h2{margin:10px 0 6px}.cf-ok p{margin:4px 0;color:var(--fg-2,var(--fg))}.cf-ok .toolbar{margin-top:18px;gap:10px}
 .cf-ic{display:inline-grid;place-items:center;width:56px;height:56px;border-radius:50%;background:var(--pnb-gold-500,#c9a227);color:#0d1b33}.cf-ic .ic{width:28px;height:28px}
 
+.qa-f{margin-top:0}
 </style>
 
 <section class="landing" id="landing" hidden>
@@ -1420,7 +1421,7 @@ function calc(r){const A=annual(r);if(A==null)return {A:null,t:0,bio:0,steps:[]}
   return {A,base,t:kg/1000,bio,steps,bioSteps,fossil,leak};}
 function flag(r,i){const v=r.m[i];if(v==null||v==='')return false;const prev=r.m.slice(0,i).filter(x=>x!=null&&x!==''&&+x>0).map(Number);if(prev.length<3)return false;const avg=prev.reduce((a,b)=>a+b)/prev.length;return +v>=avg*10}
 let dirty=false;const sel=new Set();
-const REGF={src:[],q:[],open:null,sreg:[],scen:[],stip:[],sexc:false,sina:false,m0:0,m1:11,help:true,noev:false,raro:false};
+const REGF={src:[],q:[],open:null,sreg:[],scen:[],stip:[],sexc:false,sina:false,qsec:[],qq:[],qpend:false,m0:0,m1:11,help:true,noev:false,raro:false};
 function MSEL(k,opts){const sel=REGF[k];const lbl=!sel.length?'Todas':sel.length===1?(opts.find(o=>o[0]===sel[0])||['',''])[1]:sel.length+' seleccionadas';
   return `<div class="ms${REGF.open===k?' open':''}${sel.length?' has':''}" data-ms="${k}"><button type="button" class="ms-b" data-ms-t="${k}" aria-expanded="${REGF.open===k}"><span>${esc(lbl)}</span><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>
   ${REGF.open===k?`<div class="ms-pop" role="listbox" aria-multiselectable="true"><label class="ms-o all"><input type="checkbox" data-ms-all="${k}" ${!sel.length?'checked':''}><i></i>Todas</label>${opts.map(([v,l])=>`<label class="ms-o"><input type="checkbox" data-ms-v="${k}" value="${esc(v)}" ${sel.includes(v)?'checked':''}><i></i><span>${esc(l)}</span></label>`).join('')}</div>`:''}</div>`}
@@ -1723,7 +1724,16 @@ V.preguntas=()=>{
         <div class="qa-acts">${qState.some(g=>g.yes==null&&g.sug)?`<button type="button" class="btn" id="q-sug">Usar lo sugerido</button>`:''}<button class="btn" id="q-back" type="button">Atrás</button><button class="btn primary" id="q-ok" type="button" ${pend?'disabled':''} title="${pend?`Faltan ${pend} por responder`:''}">Revisar y confirmar</button></div>
       </section>
       <p class="qa-help"><b>Marca lo que existe en esta sede.</b> Solo eso se le preguntará cada mes a ${esc(resp)}. Lo que marques “No” no aparece en su registro.</p>
-      ${QGROUPS.map(([gt,keys])=>{const gs=keys.map(k=>qState.find(g=>g.s===k)).filter(Boolean);return gs.length?`<h2 class="qa-gt">${gt}</h2>${gs.map(card).join('')}`:''}).join('')}
+      ${(()=>{const F=REGF,any=F.qsec.length||F.qq.length||F.qpend,secOk=gt=>!F.qsec.length||F.qsec.includes(gt);
+        const qopts=QGROUPS.filter(([gt])=>secOk(gt)).flatMap(([gt,keys])=>keys.filter(k=>qState.some(g=>g.s===k)).map(k=>[k,(QPLAIN[k]||[title(k)])[0]]));
+        const bar=`<div class="regf qa-f${any?' on':''}"><span class="regf-t" title="Filtros">${ic('filter')}</span>
+          <div class="ms-l"><span>Sección</span>${MSEL('qsec',QGROUPS.map(([gt])=>[gt,gt]))}</div>
+          <div class="ms-l"><span>Pregunta</span>${MSEL('qq',qopts)}</div>
+          <span class="regf-sep"></span>
+          <label class="chk w" title="Sin responder"><input type="checkbox" data-qpend ${F.qpend?'checked':''}><i></i><span class="chk-tx">Sin responder</span><b>${pend}</b></label>
+          ${any?`<button type="button" class="lnk-calc" data-qf-clear>Limpiar</button>`:''}</div>`;
+        const body=QGROUPS.filter(([gt])=>secOk(gt)).map(([gt,keys])=>{const gs=keys.map(k=>qState.find(g=>g.s===k)).filter(g=>g&&(!F.qq.length||F.qq.includes(g.s))&&(!F.qpend||g.yes==null));return gs.length?`<h2 class="qa-gt">${gt}</h2>${gs.map(card).join('')}`:''}).join('');
+        return bar+(body||`<p class="note" style="padding:24px;text-align:center">Nada coincide con los filtros. <button type="button" class="lnk-calc" data-qf-clear>Limpiar</button></p>`)})()}
     </div>`})()}`;
 };
 const QPLAIN={'ENERGIA ELECTRICA':['¿Paga factura de energía eléctrica?','La luz que llega de la red.'],
@@ -1750,6 +1760,8 @@ const qClean=s=>s.replace(/\s+-\s+[A-Za-zÁÉÍÓÚáéíóú ]+$/,'').replace(/
 function bindPreguntas(){
   $$('[data-yt]').forEach(b=>b.onclick=()=>{const g=qState[+b.dataset.yt];g.yes=g.yes!==true;if(g.yes){if(!g.q.some(q=>q.on)){if(g.q.some(q=>q.sg))g.q.forEach(q=>q.on=q.sg);else if(g.q.length<=3)g.q.forEach(q=>q.on=true);else{g.q[0].on=true;g.open=true}}}else{g.q.forEach(q=>q.on=false);g.open=false}rerender()});
   const qs=$('#q-sug');if(qs)qs.onclick=()=>{qState.forEach(g=>{if(g.yes==null&&g.sug){g.yes=true;g.q.forEach(q=>q.on=q.sg)}});rerender()};
+  $$('[data-qpend]').forEach(c=>c.onchange=()=>{REGF.qpend=c.checked;rerender()});
+  $$('[data-qf-clear]').forEach(b=>b.onclick=()=>{REGF.qsec=[];REGF.qq=[];REGF.qpend=false;rerender()});
   $$('[data-qo]').forEach(b=>b.onclick=()=>{const g=qState[+b.dataset.qo];g.open=!g.open;rerender()});
   $('#q-next')&&($('#q-next').onclick=()=>{qStep=2;render();scrollTo(0,0)});
   const qsd=$('#q-sede');if(qsd)qsd.onchange=()=>{qMeta.sede=qsd.value;const s=qSedes().find(x=>x.k===qsd.value);if(s&&CFG.tipos.some(tp=>tp.n===s.tipo))qMeta.ts=s.tipo;rerender()};
