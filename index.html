@@ -1679,7 +1679,7 @@ function qConfirm(){const M=qMeta,on=qState.flatMap(g=>g.q).filter(q=>q.on).leng
     <section class="m1"><div class="m1-h"><span class="m1-n">2</span><h3>Lo que hay en la sede</h3><button type="button" class="lnk cf-ed" data-qgo="2">Cambiar</button></div>
       <div class="cf-big"><b>${on}</b><span>preguntas cada mes</span></div>
       <div class="cf-yes">${ys.map(g=>`<span>${esc(nm(g))} <b>${g.q.filter(q=>q.on).length}</b></span>`).join('')}</div>
-      ${ns.length?`<div class="cf-nol">No aplica</div><div class="cf-yes cf-no">${ns.map(g=>`<span>${esc(nm(g))}</span>`).join('')}</div>`:''}</section>
+      ${ns.length?`<div class="cf-nol">No aplica · ${ns.reduce((a,g)=>a+g.q.length,0)} preguntas que no se harán</div><div class="cf-yes cf-no">${ns.map(g=>`<span>${esc(nm(g))} <b>${g.q.length}</b></span>`).join('')}</div>`:''}</section>
     <section class="m1 cf-next"><div class="m1-h"><span class="m1-n">3</span><h3>Qué pasa al crear</h3></div>
       <ul><li>${esc(M.resp)} recibe un correo con el enlace.</li><li>En su <b>Registro mensual</b> aparecen solo estas ${on} preguntas.</li><li>Puedes ajustar las preguntas después, sin perder lo ya registrado.</li></ul></section>
   </div>
