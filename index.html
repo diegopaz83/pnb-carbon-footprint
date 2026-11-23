@@ -925,7 +925,11 @@ body.pdf-on{overflow:hidden}
 .wz-sug-a{display:flex;gap:8px;flex-wrap:wrap}
 .r-pend{color:#b08d1a;font-style:italic}
 .st-kpis{display:flex;align-items:center;gap:28px;padding:14px 20px;margin-bottom:0;border:1px solid var(--line);border-radius:var(--r-lg,12px);background:var(--surface)}
-.st-kpis>div{display:flex;align-items:baseline;gap:8px}.st-kpis b{font-size:1.5rem;font-weight:800}.st-kpis span{color:var(--muted);font-size:.85rem}.st-kpis .note{margin:0 0 0 auto}.st-kpis.f{border-color:var(--pnb-gold-300);background:color-mix(in srgb,var(--pnb-gold-500) 8%,var(--surface))}
+.st-kpis>div{display:flex;align-items:baseline;gap:8px}.st-kpis b{font-size:1.5rem;font-weight:800}.st-kpis span{color:var(--muted);font-size:.85rem}.st-kpis .note{margin:0 0 0 auto}
+tr.org-r{cursor:pointer}tr.org-r.sel td{background:color-mix(in srgb,var(--pnb-gold-500) 10%,var(--surface))}tr.org-r.sel td:first-child{box-shadow:inset 3px 0 0 var(--pnb-gold-500)}
+.org-cur{font-size:.68rem;font-weight:700;color:var(--muted);margin-left:4px}
+.sc-org{cursor:pointer;transition:border-color .15s,box-shadow .15s}.sc-org:hover,.sc-org:focus-visible{border-color:var(--pnb-gold-500);box-shadow:0 4px 14px rgba(0,0,0,.06)}
+.sc-go{display:inline-block;margin-top:10px;font-size:.8rem;font-weight:700;color:var(--fg2)}.sc-org:hover .sc-go{color:var(--fg)}.st-kpis.f{border-color:var(--pnb-gold-300);background:color-mix(in srgb,var(--pnb-gold-500) 8%,var(--surface))}
 @media (max-width:640px){.st-kpis{flex-wrap:wrap;gap:14px}.st-kpis .note{margin:0;flex-basis:100%}}
 .st-mxp{margin-top:14px}
 .regf.st-f{flex-wrap:wrap}
@@ -1556,6 +1560,8 @@ document.addEventListener('change',e=>{const a=e.target.closest('[data-ms-all]')
   const sy=document.querySelector('.ms-pop')?.scrollTop||0;rerender();const pp=document.querySelector('.ms-pop');if(pp)pp.scrollTop=sy});
 const WANT=s=>(REGF.noev&&s==='noev')||(REGF.raro&&s==='alert');
 const CNT=st=>ROWS.filter(r=>(!REGF.src.length||REGF.src.includes(r.src))&&(!REGF.q.length||REGF.q.includes(r.id))).reduce((a,r)=>a+MI().filter(i=>rowState(r,i)===st).length,0);
+document.addEventListener('click',e=>{const oc=e.target.closest('[data-orgcard]');if(oc){CFG.orgSel=oc.dataset.orgcard;location.hash='cfg-org';setTimeout(()=>document.querySelector('#org-det')?.scrollIntoView({block:'start'}),60);return}});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'){const oc=e.target.closest&&e.target.closest('[data-orgcard]');if(oc)oc.click()}});
 document.addEventListener('click',e=>{const se=e.target.closest('button[data-sest]');if(se){REGF.sest=se.dataset.sest;rerender();return}const b=e.target.closest('button[data-regf-t]');if(b){const k=b.dataset.regfT;REGF[k]=!REGF[k];rerender()}});
 document.addEventListener('change',e=>{const c=e.target.closest('input[data-regf-t]');if(c){REGF[c.dataset.regfT]=c.checked;rerender()}});
 const MI=()=>{const a=[];for(let i=Math.min(REGF.m0,REGF.m1);i<=Math.max(REGF.m0,REGF.m1);i++)a.push(i);return a};
@@ -2284,13 +2290,13 @@ const badge=(t,k='n')=>`<span class="badge b-${k}">${esc(t)}</span>`;
 const stBadge=s=>badge(s,{Activa:'ok',Activo:'ok',Abierta:'info',Cerrada:'n',Borrador:'warn',Inactiva:'n',Inactivo:'n'}[s]||'n');
 
 /* Organización */
-V['cfg-org']=()=>{const o=CFG.orgs.find(x=>x.id===$('#org').value)||CFG.orgs[0];
+V['cfg-org']=()=>{const o=CFG.orgs.find(x=>x.id===(CFG.orgSel||$('#org').value))||CFG.orgs[0];const cur=$('#org').value;
   return cfgHead('Organización','Organizaciones','Cada cliente de Carbon Footprint es una organización con su estructura, vigencias y usuarios. Su logo y su nombre aparecen pequeños en el encabezado y en la portada del informe; el producto conserva la marca PNB.',`<button class="btn primary" id="org-new" type="button">Nueva organización</button>`)+`
   <section class="panel"><h2>Clientes</h2><div class="scroll"><table><thead><tr><th>Organización</th><th>Identificación</th><th>Sector</th><th>País</th><th>Modo</th><th class="num">Unidades</th><th>Estado</th><th></th></tr></thead><tbody>
-  ${CFG.orgs.map(x=>`<tr><td><span class="clogo sm" aria-hidden="true">${esc(x.c.slice(0,4).toUpperCase())}</span> <b>${esc(x.n)}</b></td><td class="mono">${esc(x.nit)}${F}</td><td>${esc(x.sector)}</td><td>${esc(x.pais)}</td><td>${esc(x.modo)}</td><td class="num mono">${x.id==='sena'?Object.keys(NODES).length:x.id==='pacto'?1:0}</td><td>${stBadge(x.estado)}</td><td><button class="btn sm" type="button" data-orgopen="${x.id}">Abrir</button></td></tr>`).join('')}
-  </tbody></table></div><p class="note">Vista del administrador de PNB. Cada cliente solo ve su propia organización.</p></section>
+  ${CFG.orgs.map(x=>`<tr class="org-r${x.id===o.id?' sel':''}" data-orgsel="${x.id}" tabindex="0"><td><span class="clogo sm" aria-hidden="true">${esc(x.c.slice(0,4).toUpperCase())}</span> <b>${esc(x.n)}</b></td><td class="mono">${esc(x.nit)}${F}</td><td>${esc(x.sector)}</td><td>${esc(x.pais)}</td><td>${esc(x.modo)}</td><td class="num mono">${x.id==='sena'?Object.keys(NODES).length:x.id==='pacto'?1:0}</td><td>${stBadge(x.estado)}${x.id===cur?' <span class="org-cur">En uso</span>':''}</td><td><button class="btn sm${x.id===cur?'':' primary'}" type="button" data-orgopen="${x.id}">${x.estado==='Borrador'?'Continuar':x.id===cur?'Entrar':'Abrir'}</button></td></tr>`).join('')}
+  </tbody></table></div><p class="note"><b>Abrir</b> entra a la organización y te lleva a su estructura. Clic en la fila para ver o editar sus datos abajo. Cada cliente solo ve su propia organización.</p></section>
   <div class="grid g2">
-  <section class="panel"><h2>Datos de ${esc(o.c)}</h2><div class="form f2">
+  <section class="panel" id="org-det"><h2>Datos de ${esc(o.c)} ${stBadge(o.estado)}</h2><div class="form f2">
     <label class="field"><span>Razón social</span><input value="${esc(o.n)}"></label>
     <label class="field"><span>Nombre corto (encabezado)</span><input value="${esc(o.c)}"></label>
     <label class="field"><span>Identificación tributaria</span><input value="${esc(o.nit)}"></label>
@@ -2472,7 +2478,10 @@ V['cfg-indicadores']=()=>cfgHead('Indicadores de intensidad','Indicadores de int
 
 function bindCfg(r){
   if(r==='cfg-org'){$('#org-new').onclick=()=>{CFG.wiz={s:0,n:'',c:'',nit:'',lv:['Sede'],an:'',ae:''};wizard()};
-    $$('[data-orgopen]').forEach(b=>b.onclick=()=>{const v=b.dataset.orgopen;if([...$('#org').options].some(o=>o.value===v)){$('#org').value=v;rerender()}else toast('Organización en borrador: termina su configuración para abrirla')});
+    $$('[data-orgopen]').forEach(b=>b.onclick=e=>{e.stopPropagation();const v=b.dataset.orgopen,o=CFG.orgs.find(x=>x.id===v);CFG.orgSel=v;
+      if([...$('#org').options].some(x=>x.value===v)){$('#org').value=v;$('#clogo').textContent=o.c.slice(0,4).toUpperCase()==='PACT'?'PACTO':o.c.slice(0,4).toUpperCase();toast('Entraste a '+o.c);location.hash='cfg-estructura'}
+      else{CFG.wiz={s:1,n:o.n,c:o.c,nit:o.nit,lv:['Sede'],an:'',ae:''};wizard();toast(o.c+' está en borrador: sigue con la estructura')}});
+    $$('[data-orgsel]').forEach(r=>{const go=()=>{CFG.orgSel=r.dataset.orgsel;rerender();document.querySelector('#org-det')?.scrollIntoView({behavior:'smooth',block:'start'})};r.onclick=go;r.onkeydown=e=>{if(e.key==='Enter')go()}});
     $('#org-save').onclick=()=>toast('Datos guardados');$('#org-logo').onclick=()=>toast('Logo cargado (simulado). Se verá en el encabezado y el informe.')}
   if(r==='cfg-estructura'){
     $$('[data-tg]').forEach(b=>b.onclick=()=>{stFix();CFG.open[b.dataset.tg]=!CFG.open[b.dataset.tg];rerender()});
@@ -2668,9 +2677,9 @@ const HOME={
    <div class="sc"><h3>Niveles</h3><p class="note" style="margin-top:8px">${CFG.levels.map(esc).join(' › ')}</p><a class="btn sm" href="#cfg-estructura" style="margin-top:12px">Editar estructura</a></div></div></div>`,
  pnb:()=>hello(`Hola, ${first()}`,'Tus clientes de Carbon Footprint.',`<a class="btn primary" href="#cfg-org">${ic('plus')} Nueva organización</a>`)+`
    <div class="grid g3" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">${[
-    ['SENA','Inventario anual 2025','Captura en curso',`${Object.keys(NODES).length} unidades · 82 % diligenciado`,'ok',82],
-    ['Pacto Mundial ONU España','Evento · Asamblea 2024','Cerrado','28,20 t CO2e · compensado','info',100],
-    ['Organización demo','Borrador','Configuración incompleta','Faltan unidades y usuarios','warn',20]].map(c=>`<div class="sc"><h3>${esc(c[0])} ${badge(c[2],c[4])}</h3><p class="note" style="margin-top:6px">${esc(c[1])}</p><div class="bar"><i style="width:${c[5]}%"></i></div><p class="note" style="margin-top:8px">${esc(c[3])}${F}</p></div>`).join('')}</div>
+    ['SENA','Inventario anual 2025','Captura en curso',`${Object.keys(NODES).length} unidades · 82 % diligenciado`,'ok',82,'sena'],
+    ['Pacto Mundial ONU España','Evento · Asamblea 2024','Cerrado','28,20 t CO2e · compensado','info',100,'pacto'],
+    ['Organización demo','Borrador','Configuración incompleta','Faltan unidades y usuarios','warn',20,'demo']].map(c=>`<div class="sc sc-org" role="link" tabindex="0" data-orgcard="${c[6]}" title="Abrir ${esc(c[0])}"><h3>${esc(c[0])} ${badge(c[2],c[4])}</h3><p class="note" style="margin-top:6px">${esc(c[1])}</p><div class="bar"><i style="width:${c[5]}%"></i></div><p class="note" style="margin-top:8px">${esc(c[3])}${F}</p><span class="sc-go">Abrir ›</span></div>`).join('')}</div>
    <h2 class="h-sec">Pendientes de PNB</h2>${pend([
     {lv:'warn',i:'building',t:'Organización demo: falta cargar las unidades',s:'Sin estructura no se pueden crear mediciones',b:'Abrir',h:'cfg-estructura',pri:1},
     {lv:'info',i:'flask',t:'12 factores UPME 2026 por revisar en la librería',s:'Se publicaron nuevos factores de combustibles',b:'Revisar',h:'factores',f:1},
