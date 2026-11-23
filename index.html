@@ -1204,6 +1204,7 @@ input[type=checkbox]:not(.switch input):not(.chk input):not([hidden]):focus-visi
 .cf-dl{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;margin:0;font-size:.88rem}.cf-dl dt{color:var(--muted)}.cf-dl dd{margin:0;font-weight:600}
 .cf-big{display:flex;align-items:baseline;gap:8px}.cf-big b{font-size:2.4rem;font-weight:300;line-height:1;color:var(--fg)}.cf-big span{color:var(--muted)}
 .cf-yes{display:flex;flex-wrap:wrap;gap:6px}.cf-yes span{font-size:.78rem;padding:3px 10px;border-radius:999px;background:#fbf1cf;color:#5c4600}.cf-yes b{margin-left:4px}
+.cf-nol{font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-top:6px}.cf-no span{background:var(--surface2,#eef0f3);color:var(--muted);border:1px solid var(--line)}
 .cf-next ul{margin:0;padding-left:18px;font-size:.88rem;display:flex;flex-direction:column;gap:6px}
 .cf-ok{max-width:560px;margin:20px auto;text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:32px 28px;box-shadow:var(--pnb-shadow-sm)}
 .cf-ok h2{margin:10px 0 6px}.cf-ok p{margin:4px 0;color:var(--fg-2,var(--fg))}.cf-ok .toolbar{margin-top:18px;gap:10px}
@@ -1678,7 +1679,7 @@ function qConfirm(){const M=qMeta,on=qState.flatMap(g=>g.q).filter(q=>q.on).leng
     <section class="m1"><div class="m1-h"><span class="m1-n">2</span><h3>Lo que hay en la sede</h3><button type="button" class="lnk cf-ed" data-qgo="2">Cambiar</button></div>
       <div class="cf-big"><b>${on}</b><span>preguntas cada mes</span></div>
       <div class="cf-yes">${ys.map(g=>`<span>${esc(nm(g))} <b>${g.q.filter(q=>q.on).length}</b></span>`).join('')}</div>
-      ${ns.length?`<p class="note" style="margin:8px 0 0">No aplica: ${ns.map(g=>esc(nm(g).toLowerCase())).join(', ')}.</p>`:''}</section>
+      ${ns.length?`<div class="cf-nol">No aplica</div><div class="cf-yes cf-no">${ns.map(g=>`<span>${esc(nm(g))}</span>`).join('')}</div>`:''}</section>
     <section class="m1 cf-next"><div class="m1-h"><span class="m1-n">3</span><h3>Qué pasa al crear</h3></div>
       <ul><li>${esc(M.resp)} recibe un correo con el enlace.</li><li>En su <b>Registro mensual</b> aparecen solo estas ${on} preguntas.</li><li>Puedes ajustar las preguntas después, sin perder lo ya registrado.</li></ul></section>
   </div>
