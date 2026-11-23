@@ -2437,6 +2437,8 @@ function applyBrand(){const o=CFG.orgs.find(x=>x.id===$('#org').value)||{};const
   if(o.back)st.setProperty('--rback',`url(${o.back})`);else st.removeProperty('--rback');
   const cl=$('#clogo');if(cl&&o.c){cl.innerHTML=clogoHTML(o);cl.classList.toggle('img',!!o.logo)}}
 
+function orgGo(o,msg){const sel=$('#org');if(![...sel.options].some(x=>x.value===o.id)){const op=document.createElement('option');op.value=o.id;op.textContent=o.c;sel.appendChild(op)}sel.value=o.id;CFG.orgSel=o.id;CFG.kb=null;
+  toast(msg||(o.estado==='Borrador'?`Entraste a ${o.c} (borrador): completa su estructura`:'Entraste a '+o.c));if(location.hash!=='#cfg-estructura')location.hash='cfg-estructura';else render()}
 function wizard(){const w=CFG.wiz,st=['Datos','Estructura','Vigencia','Administrador'];
   const body=[
    ()=>`<label class="field"><span>Razón social</span><input id="wz-n" value="${esc(w.n)}" placeholder="Ej. Alimentos del Valle S.A.S."></label>
@@ -2465,8 +2467,8 @@ function wizard(){const w=CFG.wiz,st=['Datos','Estructura','Vigencia','Administr
   $('#wz-back')&&($('#wz-back').onclick=()=>{keep();w.s--;wizard()});
   $('#wz-next').onclick=()=>{keep();if(w.s===0&&!w.n.trim()){toast('Escribe la razón social');$('#wz-n').focus();return}
     if(w.s<3){w.s++;wizard();return}
-    CFG.orgs.push({id:'o'+Date.now(),n:w.n,c:w.c||w.n,nit:w.nit||'Sin registrar',sector:'Sin registrar',pais:'Colombia',modo:'Inventario anual',estado:'Borrador',alta:'2026-11-22'});
-    closeDrawer();toast(`${w.n} creada con niveles ${w.lv.join(' › ')}. Siguiente paso: cargar sus unidades.`);rerender()};
+    const no={id:'o'+Date.now(),n:w.n,c:w.c||w.n,nit:w.nit||'Sin registrar',sector:'Sin registrar',pais:'Colombia',modo:'Inventario anual',estado:'Borrador',alta:'2026-11-22'};CFG.orgs.push(no);
+    closeDrawer();orgGo(no,`${no.c} creada y seleccionada. Ahora carga su estructura (${w.lv.join(' › ')}).`)};
 }
 
 /* Estructura */
@@ -2605,8 +2607,7 @@ V['cfg-indicadores']=()=>cfgHead('Indicadores de intensidad','Indicadores de int
 function bindCfg(r){
   if(r==='cfg-org'){$('#org-new').onclick=()=>{CFG.wiz={s:0,n:'',c:'',nit:'',lv:['Sede'],an:'',ae:''};wizard()};
     $$('[data-orgopen]').forEach(b=>b.onclick=e=>{e.stopPropagation();const v=b.dataset.orgopen,o=CFG.orgs.find(x=>x.id===v);CFG.orgSel=v;
-      if([...$('#org').options].some(x=>x.value===v)){$('#org').value=v;toast('Entraste a '+o.c);location.hash='cfg-estructura'}
-      else{CFG.wiz={s:1,n:o.n,c:o.c,nit:o.nit,lv:['Sede'],an:'',ae:''};wizard();toast(o.c+' está en borrador: sigue con la estructura')}});
+      orgGo(o)});
     $$('[data-orgsel]').forEach(r=>{const go=()=>orgDrawer(r.dataset.orgsel,'datos');r.onclick=e=>{if(e.target.closest('button,a,.kb-w'))return;go()};r.onkeydown=e=>{if(e.key==='Enter'&&e.target===r)go()}});
         const okb=()=>{CFG.kb=null;rerender()};
     $$('[data-okb]').forEach(b=>b.onclick=e=>{e.stopPropagation();const k='o'+b.dataset.okb;CFG.kb=CFG.kb===k?null:k;rerender();document.querySelector('.kb-m button')?.focus()});
