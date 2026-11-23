@@ -1288,6 +1288,23 @@ input[type=checkbox]:not(.switch input):not(.chk input):not([hidden]):focus-visi
 .qb-acc:hover{background:var(--surface2);color:var(--fg)}.qb-acc.on{transform:rotate(180deg)}
 .qb-b.col .qb-bar{padding-bottom:0}
 .qb.no .qb-b{opacity:.92}
+
+.st-mx col.c-r{width:190px}.s1+.m1-foot{max-width:980px}
+.s1{display:flex;flex-direction:column;gap:10px;max-width:980px}
+.s1-r{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:16px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.s1-q h3{margin:0;font-size:1rem}.s1-q p{margin:3px 0 0;font-size:.82rem;color:var(--muted)}
+.s1-c{justify-self:end}
+.s1-seg{display:flex;padding:3px;gap:3px;border-radius:999px;background:var(--surface2)}
+.s1-seg button{display:inline-flex;align-items:center;gap:6px;border:0;background:transparent;font:inherit;font-size:.86rem;font-weight:700;padding:8px 16px;border-radius:999px;color:var(--muted);cursor:pointer;white-space:nowrap}
+.s1-seg button .ic{width:13px;height:13px}
+.s1-seg button.on{background:var(--pnb-gold-500,#c9a227);color:#0d1b33;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.s1-seg button:disabled{cursor:not-allowed;opacity:.55}
+.s1-tp{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}
+.s1-tp button{display:flex;flex-direction:column;align-items:flex-start;gap:1px;border:1px solid var(--line-strong);background:var(--surface);border-radius:12px;padding:8px 14px;font:inherit;cursor:pointer;color:var(--fg);min-width:120px;text-align:left}
+.s1-tp button b{font-size:.88rem}.s1-tp button small{font-size:.74rem;color:var(--muted)}
+.s1-tp button.on{border-color:var(--pnb-gold-500,#c9a227);background:#fbf1cf;box-shadow:inset 0 0 0 1px var(--pnb-gold-500,#c9a227)}
+@media (max-width:900px){.s1-r{grid-template-columns:28px minmax(0,1fr)}.s1-c{grid-column:1/-1;justify-self:stretch}.s1-seg button{flex:1;justify-content:center;padding:12px 8px}.s1-tp{justify-content:stretch}.s1-tp button{flex:1 1 140px}}
+@media (max-width:760px){.st-mx tr>td:nth-child(6){margin-left:calc(var(--lv,0)*16px + 54px);flex:1 1 100%}.st-mx tr>td:nth-child(6) select{width:100%}}
 </style>
 
 <section class="landing" id="landing" hidden>
@@ -1751,48 +1768,47 @@ addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer()});
 /* ---- Preguntas que aplican ---- */
 let TRAZA=null;const loadTraza=()=>TRAZA?Promise.resolve(TRAZA):fetch('traza.json').then(r=>r.json()).then(j=>TRAZA=j);
 let qState=null,qStep=1,qFilter='',qDone=false;
-function qConfirm(){const M=qMeta,on=qState.flatMap(g=>g.q).filter(q=>q.on).length,ys=qState.filter(g=>g.yes),ns=qState.filter(g=>g.yes===false),nm=g=>(QPLAIN[g.s]||[title(g.s)])[0].replace(/^¿|\?$/g,'');
-  if(qDone)return `<section class="cf-ok"><span class="cf-ic">${ic('check')}</span><h2>Medición creada</h2><p><b>${esc(M.sede)}</b> · ${M.tipo} ${M.vig}</p><p>Le enviamos un correo a <b>${esc(M.resp)}</b>. Desde hoy ve <b>${on} preguntas</b> en su registro mensual.</p><div class="toolbar" style="justify-content:center"><button class="btn" id="q-again" type="button">Crear otra medición</button><button class="btn primary" id="q-goreg" type="button">Ver el registro mensual</button></div></section>`;
+function qConfirm(){const nS=sedesTipo(qMeta.ts).length,M=qMeta,on=qState.flatMap(g=>g.q).filter(q=>q.on).length,ys=qState.filter(g=>g.yes),ns=qState.filter(g=>g.yes===false),nm=g=>(QPLAIN[g.s]||[title(g.s)])[0].replace(/^¿|\?$/g,'');
+  if(qDone)return `<section class="cf-ok"><span class="cf-ic">${ic('check')}</span><h2>Preguntas definidas</h2><p>Sedes tipo <b>${esc(M.ts)}</b> · ${M.tipo} ${M.vig}</p><p>Avisamos a los responsables de las <b>${nS} sedes</b>. Desde hoy cada una ve <b>${on} preguntas</b> en su registro mensual.</p><div class="toolbar" style="justify-content:center"><button class="btn" id="q-again" type="button">Crear otra medición</button><button class="btn primary" id="q-goreg" type="button">Ver el registro mensual</button></div></section>`;
   return `<p class="m1-intro">Revisa antes de crear. Si algo no está bien, vuelve al paso que corresponde.</p>
   <div class="cf-grid">
     <section class="m1"><div class="m1-h"><span class="m1-n">1</span><h3>La medición</h3><button type="button" class="lnk cf-ed" data-qgo="1">Cambiar</button></div>
-      <dl class="cf-dl"><dt>Sede</dt><dd>${esc(M.sede)}</dd><dt>Año</dt><dd>${M.vig}</dd><dt>Tipo</dt><dd>${M.tipo} · sede ${M.ts.toLowerCase()}</dd><dt>Llena los datos</dt><dd>${esc(M.resp)}</dd></dl></section>
-    <section class="m1"><div class="m1-h"><span class="m1-n">2</span><h3>Lo que hay en la sede</h3><button type="button" class="lnk cf-ed" data-qgo="2">Cambiar</button></div>
+      <dl class="cf-dl"><dt>Año</dt><dd>${M.vig}</dd><dt>Tipo de sede</dt><dd>${esc(M.ts)} · ${nS} sedes</dd><dt>Medición</dt><dd>${M.tipo}</dd><dt>Punto de partida</dt><dd>${M.copy==='prev'?'Lo de '+(+M.vig-1):'En blanco'}</dd></dl></section>
+    <section class="m1"><div class="m1-h"><span class="m1-n">2</span><h3>Lo que tiene una sede ${esc(M.ts.toLowerCase())}</h3><button type="button" class="lnk cf-ed" data-qgo="2">Cambiar</button></div>
       <div class="cf-big"><b>${on}</b><span>preguntas cada mes · <b class="cf-evn">${ic('camera')}${qState.flatMap(g=>g.q).filter(q=>q.on&&q.ev).length}</b> piden factura</span></div>
       <div class="cf-yes">${ys.map(g=>`<span>${esc(nm(g))} <b>${g.q.filter(q=>q.on).length}</b></span>`).join('')}</div>
       ${ns.length?`<div class="cf-nol">No aplica · ${ns.reduce((a,g)=>a+g.q.length,0)} preguntas que no se harán</div><div class="cf-yes cf-no">${ns.map(g=>`<span>${esc(nm(g))} <b>${g.q.length}</b></span>`).join('')}</div>`:''}</section>
     <section class="m1 cf-next"><div class="m1-h"><span class="m1-n">3</span><h3>Qué pasa al crear</h3></div>
-      <ul><li>${esc(M.resp)} recibe un correo con el enlace.</li><li>En su <b>Registro mensual</b> aparecen solo estas ${on} preguntas.</li><li>Puedes ajustar las preguntas después, sin perder lo ya registrado.</li></ul></section>
+      <ul><li>Las <b>${nS} sedes</b> tipo ${esc(M.ts.toLowerCase())} reciben estas ${on} preguntas en su <b>Registro mensual</b>.</li><li>Al responsable de cada sede (definido en Estructura) le llega un correo.</li><li>Se actualiza <b>Tipos de unidad</b> con lo que marcaste.</li><li>Puedes ajustar las preguntas después, sin perder lo ya registrado.</li></ul></section>
   </div>
-  <div class="m1-foot"><span class="note">Se creará la medición <b>${M.vig}</b> de <b>${esc(M.sede)}</b>.</span><span class="toolbar"><button class="btn" data-qgo="2" type="button">Atrás</button><button class="btn primary" id="q-create" type="button">Crear medición</button></span></div>`}
-const qMeta={sede:'Centro Agropecuario de la Granja - Sede Principal',vig:'2026',tipo:'Inventario anual',ts:'Agropecuaria',resp:'Jorge Ruiz',copy:'prev'};
+  <div class="m1-foot"><span class="note">Se definirán las preguntas <b>${M.vig}</b> de las sedes tipo <b>${esc(M.ts)}</b>.</span><span class="toolbar"><button class="btn" data-qgo="2" type="button">Atrás</button><button class="btn primary" id="q-create" type="button">Crear medición</button></span></div>`}
+const qMeta={vig:'2026',tipo:'Inventario anual',ts:'Agropecuaria',copy:'prev'};let qTs=null;
+const sedesTipo=tp=>TREE.flatMap(r=>r.ch.flatMap(c=>c.ch)).filter(s=>s.tipo===tp&&s.s==='Activa'&&s.inc);
 let _qs=null;const qSedes=()=>_qs||(_qs=TREE.flatMap(r=>r.ch.flatMap(c=>c.ch.map(s=>({k:s.n,r:r.n,c:c.n,tipo:s.tipo})))));
 V.preguntas=()=>{
   if(!TRAZA){loadTraza().then(render);return '<div class="panel">Cargando preguntas…</div>'}
-  if(!qState){const by={};const agro=new Set();TRAZA.forEach(x=>{(by[x[3]]=by[x[3]]||new Set()).add(x[4]);if(/agrop|granja|agro/i.test(x[2]))agro.add(x[4])});
-    qState=Object.entries(by).map(([s,qs])=>{const q=[...qs].sort().map(q=>({t:q,on:false,sg:agro.has(q),ev:true}));const sug=q.some(x=>x.sg);return {s,q,sug,yes:null,open:false}})}
+  if(!qState||qTs!==qMeta.ts){const by={};const agro=new Set();TRAZA.forEach(x=>{(by[x[3]]=by[x[3]]||new Set()).add(x[4]);if(/agrop|granja|agro/i.test(x[2]))agro.add(x[4])});
+    const TP=CFG.tipos.find(tp=>tp.n===qMeta.ts)||{f:[]},isAg=/agrop/i.test(qMeta.ts);qTs=qMeta.ts;
+    qState=Object.entries(by).map(([s,qs])=>{const sug=TP.f.includes(s);const q=[...qs].sort().map(q=>({t:q,on:false,sg:sug&&(isAg?agro.has(q):true),ev:true}));if(sug&&!q.some(x=>x.sg))q.forEach(x=>x.sg=true);return {s,q,sug,yes:null,open:false}})}
   const all=qState.flatMap(g=>g.q),on=all.filter(q=>q.on).length,srcOn=qState.filter(g=>g.q.some(q=>q.on)).length;
-  return `<div class="pagehead"><div><div class="crumb">Captura · Nueva medición</div><h1>Preguntas que aplican</h1><p>Responde Sí o No a lo que hay en la sede. Con eso armamos las preguntas que verá cada mes quien captura.</p></div>
-  <div class="stepper"><span class="${qStep===1?'on':''}">1 · Sede y vigencia</span><span class="${qStep===2?'on':''}">2 · Qué hay en la sede</span><span class="${qStep===3?'on':''}">3 · Confirmar</span></div></div>
-  ${qStep===1?(()=>{const M=qMeta,S=qSedes(),cur=S.find(s=>s.k===M.sede),caps=CFG.users.filter(u=>u.r===3&&u.s==='Activo');
-    const box=(n,tt,help,ctl,extra='')=>`<article class="m1"><div class="m1-h"><span class="m1-n">${n}</span><h3>${tt}</h3></div><p>${help}</p>${ctl}${extra}</article>`;
-    return `<p class="m1-intro">Una <b>medición</b> es el inventario de una sede en un periodo. Aquí dices de qué sede, de qué año y quién va a llenar los datos. En el siguiente paso eliges qué cosas tiene esa sede.</p>
-    <div class="m1-grid">
-      ${box(1,'¿De qué sede?',`Cada sede se mide por separado. Busca entre las <b>${S.length} sedes</b> que hay en Estructura.`,`<input id="q-sede" list="q-sl" class="m1-in" value="${esc(M.sede)}" placeholder="Escribe el nombre de la sede o del centro"><datalist id="q-sl">${S.map(s=>`<option value="${esc(s.k)}">${esc(s.r)}</option>`).join('')}</datalist>`,cur?`<div class="m1-x">${esc(cur.r)} › ${esc(cur.c)}</div>`:`<div class="m1-x w">Elige una sede de la lista</div>`)}
-      ${box(2,'¿Qué año se mide?','La vigencia fija los factores y los PCG que se usan en el cálculo.',`<select id="q-vig" class="m1-in">${['2026','2025'].map(v=>`<option ${M.vig===v?'selected':''}>${v}</option>`).join('')}</select>`)}
-      ${box(3,'¿Qué tipo de medición?','<b>Inventario anual</b>: se llenan los 12 meses. <b>Evento</b>: una actividad puntual, como una feria o un congreso.',`<div class="m1-seg">${['Inventario anual','Evento'].map(v=>`<button type="button" data-mt="${v}" class="${M.tipo===v?'on':''}">${v}</button>`).join('')}</div>`)}
-      ${box(4,'¿Qué tipo de sede es?','Sirve para sugerir lo que suele tener una sede así. Viene de Estructura; puedes cambiarlo.',`<select id="q-ts" class="m1-in">${CFG.tipos.map(tp=>`<option ${tp.n===M.ts?'selected':''}>${esc(tp.n)}</option>`).join('')}</select>`,`<div class="m1-x">${esc((CFG.tipos.find(tp=>tp.n===M.ts)||{}).d||'')}</div>`)}
-      ${box(5,'¿Quién llena los datos?','La persona que registra cada mes, desde el celular o el computador. Le llega un correo con el enlace.',`<div class="m1-ppl">${caps.map(u=>`<button type="button" data-mr="${esc(u.n)}" class="${M.resp===u.n?'on':''}">${PHOTO_BY_NAME[u.n]?`<img src="${PHOTO[PHOTO_BY_NAME[u.n]]}" alt="">`:`<span class="avatar sm">${esc(u.n.split(' ').map(w=>w[0]).join('').slice(0,2))}</span>`}<span><b>${esc(u.n)}</b><small>${esc(u.a)}</small></span></button>`).join('')}</div>`,`<div class="m1-x">Solo aparecen usuarios con rol Responsable de captura. <a href="#cfg-usuarios">Invitar a alguien</a></div>`)}
-      ${box(6,'¿Desde dónde arrancamos?','Para no empezar de cero, copia lo que ya se definió antes.',`<div class="m1-opts">${[['prev','Lo del año pasado de esta sede','Mismas preguntas que en 2025.'],['tpl','La plantilla del tipo de sede','Lo típico de una sede '+M.ts.toLowerCase()+'.'],['none','Empezar en blanco','Respondes todo en el paso 2.']].map(([k,a,b])=>`<label class="${M.copy===k?'on':''}"><input type="radio" name="q-copy" value="${k}" ${M.copy===k?'checked':''}><span><b>${a}</b><small>${b}</small></span></label>`).join('')}</div>`)}
+  return `<div class="pagehead"><div><div class="crumb">Captura · Nueva medición</div><h1>Preguntas que aplican</h1><p>Define qué se le pregunta cada mes a cada <b>tipo de sede</b>. Todas las sedes de ese tipo reciben las mismas preguntas.</p></div>
+  <div class="stepper"><span class="${qStep===1?'on':''}">1 · Año y tipo de sede</span><span class="${qStep===2?'on':''}">2 · Qué tiene ese tipo de sede</span><span class="${qStep===3?'on':''}">3 · Confirmar</span></div></div>
+  ${qStep===1?(()=>{const M=qMeta,TP=CFG.tipos.find(tp=>tp.n===M.ts)||CFG.tipos[0],ns=sedesTipo(M.ts).length,prevY=String(+M.vig-1);
+    const row=(n,tt,help,ctl)=>`<section class="s1-r"><span class="m1-n">${n}</span><div class="s1-q"><h3>${tt}</h3>${help?`<p>${help}</p>`:''}</div><div class="s1-c">${ctl}</div></section>`;
+    return `<div class="s1">
+      ${row(1,'¿Qué año se mide?','Las vigencias cerradas no se pueden modificar.',`<div class="s1-seg">${[...CFG.vig].reverse().map(v=>{const y=String(v.y),cl=v.s==='Cerrada'||v.s==='Activa'&&false;const closed=v.s!=='Abierta';return `<button type="button" data-qv="${y}" class="${M.vig===y?'on':''}" ${closed?'disabled':''} title="${closed?'Vigencia '+v.s.toLowerCase()+': no se modifica':'Vigencia abierta'}">${closed?ic('lock'):''}${y}</button>`}).join('')}</div>`)}
+      ${row(2,'¿Para qué tipo de sede?',`Las preguntas aplican a todas las sedes activas de ese tipo. El tipo de cada sede se asigna en <a href="#cfg-estructura">Estructura</a>.`,`<div class="s1-tp">${CFG.tipos.map(tp=>{const c=sedesTipo(tp.n).length;return `<button type="button" data-qtp="${esc(tp.n)}" class="${M.ts===tp.n?'on':''}"><b>${esc(tp.n)}</b><small>${c} sede${c===1?'':'s'}</small></button>`}).join('')}</div>`)}
+      ${row(3,'¿Qué tipo de medición?','Inventario anual: se llenan los 12 meses. Evento: una actividad puntual.',`<div class="s1-seg">${['Inventario anual','Evento'].map(v=>`<button type="button" data-mt="${v}" class="${M.tipo===v?'on':''}">${v}</button>`).join('')}</div>`)}
+      ${row(4,'¿Traemos lo del año anterior?','',`<div class="s1-seg">${[['prev','Traer lo de '+prevY],['none','Empezar en blanco']].map(([k,l])=>`<button type="button" data-qcp="${k}" class="${M.copy===k?'on':''}">${l}</button>`).join('')}</div>`)}
     </div>
-    <div class="m1-foot"><span class="note">${cur&&M.resp?`Se creará la medición <b>${M.vig}</b> de <b>${esc(cur.k)}</b>, a cargo de <b>${esc(M.resp)}</b>.`:'Completa la sede y quién llena los datos para continuar.'}</span><button class="btn primary" id="q-next" type="button" ${cur&&M.resp?'':'disabled'}>Continuar · qué hay en la sede</button></div>`})():
-  qStep===3?qConfirm():(()=>{const resp=qMeta.resp||'Jorge Ruiz';const first=resp.split(' ')[0];
+    <div class="m1-foot"><span class="note">Vas a definir las preguntas <b>${M.vig}</b> para las <b>${ns} sedes</b> tipo <b>${esc(M.ts)}</b>. El responsable de cada sede se asigna en Estructura.</span><button class="btn primary" id="q-next" type="button">Continuar</button></div>`})():
+  qStep===3?qConfirm():(()=>{const nS=sedesTipo(qMeta.ts).length;
     const card=g=>{const gi=qState.indexOf(g),P=QPLAIN[g.s]||[title(g.s),''],n=g.q.filter(q=>q.on).length,yes=g.yes,multi=g.q.length>1,ne=g.q.filter(q=>q.on&&q.ev).length,LIM=5;
       const kb=(k,items,lbl)=>`<span class="kb-w"><button type="button" class="kb" data-qkb="${k}" aria-haspopup="menu" aria-expanded="${CFG.kb===k}" aria-label="${lbl}">⋮</button>${CFG.kb===k?`<div class="kb-m" role="menu">${items}</div>`:''}</span>`;
       const show=yes===true||!!g.keep,exp=g.acc!==false;const rows=g.q.map((q,qi)=>({q,qi})).sort((a,b)=>(b.q.on?1:0)-(a.q.on?1:0)).filter((x,i)=>g.open||g.q.length<=LIM+1||i<LIM);
       return `<article class="qb ${yes===true?'yes':yes===false?'no':'pend'}">
         <header class="qb-h">
-          <div class="qb-t"><h3>${esc(P[0])}${g.sug&&yes==null?'<span class="qb-sug">Sugerido</span>':''}</h3>${P[1]?`<p>${esc(P[1])}</p>`:''}</div>
+          <div class="qb-t"><h3>${esc(P[0])}${g.sug&&yes==null?'<span class="qb-sug" title="Viene de Configuración › Tipos de unidad">Sugerido</span>':''}</h3>${P[1]?`<p>${esc(P[1])}</p>`:''}</div>
           <div class="qb-yn" role="radiogroup" aria-label="${esc(P[0])}"><button type="button" role="radio" aria-checked="${yes===true}" class="${yes===true?'on':''}" data-yv="${gi}:1">Sí</button><button type="button" role="radio" aria-checked="${yes===false}" class="${yes===false?'on':''}" data-yv="${gi}:0">No</button></div>
           ${show?`<button type="button" class="qb-acc${exp?' on':''}" data-qacc="${gi}" aria-expanded="${exp}" aria-label="${exp?'Ocultar':'Ver'} preguntas"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>`:''}
           ${kb('q'+gi,`<button type="button" role="menuitem" data-qadd="${gi}">Agregar pregunta</button><button type="button" role="menuitem" data-qren="${gi}">Renombrar bloque</button><button type="button" role="menuitem" class="del" data-qdel="${gi}">Eliminar bloque</button>`,'Acciones del bloque')}
@@ -1811,12 +1827,12 @@ V.preguntas=()=>{
     const tot=qState.length,done=tot-pend,ny=qState.filter(g=>g.yes).length;
     return `<div class="qa-wrap">
       <section class="qa-top">
-        <div class="qa-k"><b>${on}</b><span>pregunta${on===1?'':'s'} verá ${esc(first)} cada mes</span></div>
+        <div class="qa-k"><b>${on}</b><span>pregunta${on===1?'':'s'} al mes por sede · ${nS} sedes ${esc(qMeta.ts.toLowerCase())}s</span></div>
         <div class="qa-k"><b>${done}<small>/${tot}</small></b><span>respondidas</span><i class="qa-bar"><i style="width:${done/tot*100}%"></i></i></div>
         <div class="qa-k"><b>${ny}</b><span>con Sí · ${done-ny} con No</span></div>
         <div class="qa-acts">${qState.some(g=>g.yes==null&&g.sug)?`<button type="button" class="btn" id="q-sug">Usar lo sugerido</button>`:''}<button class="btn" id="q-back" type="button">Atrás</button><button class="btn primary" id="q-ok" type="button" ${pend?'disabled':''} title="${pend?`Faltan ${pend} por responder`:''}">Revisar y confirmar</button></div>
       </section>
-      <p class="qa-help">Di <b>Sí</b> a lo que existe en la sede. Solo eso le aparece a ${esc(resp)} cada mes.</p>
+      <p class="qa-help">Di <b>Sí</b> a lo que suele tener una sede <b>${esc(qMeta.ts.toLowerCase())}</b>. Eso se le pregunta cada mes a sus ${nS} sedes.</p>
       ${(()=>{const F=REGF,any=F.qsec.length||F.qq.length||F.qpend,secOk=gt=>!F.qsec.length||F.qsec.includes(gt);
         const qopts=QGROUPS.filter(([gt])=>secOk(gt)).flatMap(([gt,keys])=>keys.filter(k=>qState.some(g=>g.s===k)).map(k=>[k,(QPLAIN[k]||[title(k)])[0]]));
         const bar=`<div class="regf qa-f${any?' on':''}"><span class="regf-t" title="Filtros">${ic('filter')}</span>
@@ -1874,7 +1890,9 @@ function bindPreguntas(){
   $$('[data-qf-clear]').forEach(b=>b.onclick=()=>{REGF.qsec=[];REGF.qq=[];REGF.qpend=false;rerender()});
   $$('[data-qo]').forEach(b=>b.onclick=()=>{const g=qState[+b.dataset.qo];g.open=!g.open;rerender()});
   $('#q-next')&&($('#q-next').onclick=()=>{qStep=2;render();scrollTo(0,0)});
-  const qsd=$('#q-sede');if(qsd)qsd.onchange=()=>{qMeta.sede=qsd.value;const s=qSedes().find(x=>x.k===qsd.value);if(s&&CFG.tipos.some(tp=>tp.n===s.tipo))qMeta.ts=s.tipo;rerender()};
+  $$('[data-qv]').forEach(b=>b.onclick=()=>{qMeta.vig=b.dataset.qv;rerender()});
+  $$('[data-qtp]').forEach(b=>b.onclick=()=>{qMeta.ts=b.dataset.qtp;rerender()});
+  $$('[data-qcp]').forEach(b=>b.onclick=()=>{qMeta.copy=b.dataset.qcp;rerender()});
   $('#q-vig')&&($('#q-vig').onchange=e=>{qMeta.vig=e.target.value});
   $('#q-ts')&&($('#q-ts').onchange=e=>{qMeta.ts=e.target.value;rerender()});
   $$('[data-mt]').forEach(b=>b.onclick=()=>{qMeta.tipo=b.dataset.mt;rerender()});
@@ -1883,7 +1901,7 @@ function bindPreguntas(){
   $('#q-back')&&($('#q-back').onclick=()=>{qStep=1;render()});
   $('#q-ok')&&($('#q-ok').onclick=()=>{qStep=3;render();scrollTo(0,0)});
   $$('[data-qgo]').forEach(b=>b.onclick=()=>{qStep=+b.dataset.qgo;render();scrollTo(0,0)});
-  $('#q-create')&&($('#q-create').onclick=()=>{qDone=true;render();scrollTo(0,0);toast('Medición creada')});
+  $('#q-create')&&($('#q-create').onclick=()=>{const TP=CFG.tipos.find(tp=>tp.n===qMeta.ts);if(TP)TP.f=qState.filter(g=>g.yes).map(g=>g.s);qDone=true;render();scrollTo(0,0);toast('Medición creada')});
   $('#q-again')&&($('#q-again').onclick=()=>{qDone=false;qState=null;qStep=1;render();scrollTo(0,0)});
   $('#q-goreg')&&($('#q-goreg').onclick=()=>{qDone=false;qStep=1;location.hash='registro'});
   $('#q-add')&&($('#q-add').onclick=()=>toast('Abre la librería de actividades para elegir una pregunta nueva'));
@@ -2289,9 +2307,9 @@ V['cfg-estructura']=()=>{const x=NODES[CFG.sel];const lv=CFG.levels;
   <div class="st-kpis">${lv.map((l,i)=>`<div><b>${countLv(i)}</b><span>${esc(l)}${countLv(i)===1?'':'s'}</span></div>`).join('')}<p class="note">Edita directo en la matriz. Los cambios se guardan solos.</p></div>
   ${stFilters()}
   <section class="panel st-mxp"><div class="toolbar" style="justify-content:space-between;margin-bottom:10px"><h2 style="margin:0">Unidades <span class="note" style="font-weight:400">· ${stCount()} visibles</span></h2><span><button type="button" class="btn sm primary" id="st-add1">${ic('plus')}Agregar ${esc((lv[0]||'').toLowerCase())}</button> <button type="button" class="btn sm" id="st-exp">Expandir todo</button> <button type="button" class="btn sm" id="st-col">Contraer todo</button></span></div>
-  <div class="scroll"><table class="st-mx"><colgroup><col class="c-n"><col class="c-c"><col class="c-t"><col class="c-s"><col class="c-s"></colgroup>
-  <thead><tr><th>${lv.map(esc).join(' › ')}</th><th>Código</th><th>Tipo de unidad</th><th>Activa</th><th>Incluida</th></tr></thead>
-  <tbody>${TREE.map(stRow).join('')||`<tr><td colspan="5" class="note" style="padding:24px;text-align:center">Ninguna unidad cumple los filtros.</td></tr>`}</tbody></table></div></section>`};
+  <div class="scroll"><table class="st-mx"><colgroup><col class="c-n"><col class="c-c"><col class="c-t"><col class="c-s"><col class="c-s"><col class="c-r"></colgroup>
+  <thead><tr><th>${lv.map(esc).join(' › ')}</th><th>Código</th><th>Tipo de unidad</th><th>Activa</th><th>Incluida</th><th>Responsable</th></tr></thead>
+  <tbody>${TREE.map(stRow).join('')||`<tr><td colspan="6" class="note" style="padding:24px;text-align:center">Ninguna unidad cumple los filtros.</td></tr>`}</tbody></table></div></section>`};
 const stAny=()=>REGF.sreg.length||REGF.scen.length||REGF.stip.length||REGF.sexc||REGF.sina||CFG.q;
 function stOK(x){if(REGF.stip.length&&!REGF.stip.includes(x.tipo))return false;if(REGF.sexc&&x.inc)return false;if(REGF.sina&&x.s==='Activa')return false;
   if(CFG.q){const q=CFG.q.toLowerCase();if(!x.n.toLowerCase().includes(q)&&!x.code.toLowerCase().includes(q))return false}return true}
@@ -2302,7 +2320,7 @@ const stCount=()=>{let n=0;(function w(a){a.forEach(x=>{if(stVis(x))n++;w(x.ch)}
 function stRow(x){if(!stVis(x))return '';const has=x.ch.length,open=stAny()?x.ch.some(stVis):CFG.open[x.id];const L=CFG.levels;
   return `<tr class="l${Math.min(x.lv,2)}${x.inc?'':' exc'}${x.s==='Activa'?'':' ina'}" style="--lv:${x.lv}"><td><div class="st-n" style="padding-left:${x.lv*28}px">${has?`<button class="tg" type="button" data-tg="${x.id}" aria-expanded="${!!open}" aria-label="${open?'Contraer':'Expandir'}">${open?'▾':'▸'}</button>`:'<span class="tg"></span>'}${has?`<span class="st-cnt" title="${x.ch.length} ${esc((L[x.lv+1]||'').toLowerCase())}${x.ch.length>1?'s':''}">${x.ch.length}</span>`:'<span class="st-cnt e"></span>'}${CFG.edit===x.id?`<input data-ed="${x.id}|n" data-edn value="${esc(x.n)}" aria-label="${esc(L[x.lv]||'Nombre')}">`:`<span class="st-lbl">${esc(x.n)}</span>`}<span class="kb-w"><button type="button" class="kb" data-kb="${x.id}" aria-haspopup="menu" aria-expanded="${CFG.kb===x.id}" aria-label="Acciones de ${esc(x.n)}">⋮</button>${CFG.kb===x.id?`<div class="kb-m" role="menu"><button type="button" role="menuitem" data-kbe="${x.id}">Editar nombre</button>${x.lv<L.length-1?`<button type="button" role="menuitem" data-add="${x.id}">Agregar ${esc((L[x.lv+1]||'').toLowerCase())}</button>`:''}<button type="button" role="menuitem" class="del" data-del="${x.id}">Eliminar</button></div>`:''}</span></div></td><td class="st-code">${esc(x.code)}</td>
   ${x.lv===L.length-1?`<td><select data-ed="${x.id}|tipo" aria-label="Tipo de unidad">${CFG.tipos.map(tp=>`<option ${tp.n===x.tipo?'selected':''}>${esc(tp.n)}</option>`).join('')}</select></td>
-  <td>${sw(`data-ed="${x.id}|s"`,x.s==='Activa','Activa')}</td><td title="${x.s==='Activa'?'':'Una unidad inactiva no entra al inventario'}">${sw(`data-ed="${x.id}|inc"${x.s==='Activa'?'':' disabled'}`,x.inc,'Incluida')}</td>`:'<td></td><td></td><td></td>'}</tr>${open?x.ch.map(stRow).join(''):''}`}
+  <td>${sw(`data-ed="${x.id}|s"`,x.s==='Activa','Activa')}</td><td title="${x.s==='Activa'?'':'Una unidad inactiva no entra al inventario'}">${sw(`data-ed="${x.id}|inc"${x.s==='Activa'?'':' disabled'}`,x.inc,'Incluida')}</td><td>${(()=>{const caps=CFG.users.filter(u=>u.r===3);if(x.resp===undefined)x.resp=caps.length?caps[(parseInt(String(x.id).replace(/\D/g,''))||0)%caps.length].n:'';return `<select data-ed="${x.id}|resp" aria-label="Responsable de la sede"><option value="">Sin asignar</option>${caps.map(u=>`<option ${u.n===x.resp?'selected':''}>${esc(u.n)}</option>`).join('')}</select>`})()}</td>`:'<td></td><td></td><td></td><td></td>'}</tr>${open?x.ch.map(stRow).join(''):''}`}
 document.addEventListener('click',e=>{if(CFG.kb&&!e.target.closest('.kb-w')){CFG.kb=null;rerender()}});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&CFG.kb){const id=CFG.kb;CFG.kb=null;rerender();document.querySelector(`[data-kb="${id}"]`)?.focus()}});
 function promptModal(title,label,val,ph,ok,cb){confirmModal({title,ok,body:`<label class="mdl-f"><span>${esc(label)}</span><input id="mdl-in" class="m1-in" value="${esc(val)}" placeholder="${esc(ph)}"></label>`,onOk:()=>{const v=inp.value.trim();if(v)cb(v)}});const inp=document.querySelector('#mdl-in');inp.focus();inp.select();inp.onkeydown=e=>{if(e.key==='Enter')document.querySelector('.mdl [data-m="ok"]').click()}}
@@ -2424,7 +2442,7 @@ function bindCfg(r){
     $$('[data-kbe]').forEach(b=>b.onclick=()=>{CFG.edit=b.dataset.kbe;CFG.kb=null;rerender();const e=document.querySelector('[data-edn]');if(e){e.focus();e.select()}});
     const en=$('[data-edn]');if(en){en.onkeydown=e=>{if(e.key==='Enter')en.blur();if(e.key==='Escape'){en.value=NODES[CFG.edit].n;en.blur()}};en.onblur=()=>{const x=NODES[CFG.edit];if(x){const v=en.value.trim();if(v&&v!==x.n){x.n=v;toast('Guardado')}}CFG.edit=null;rerender()}}
     $('#st-add1').onclick=()=>addChild(null);
-    $$('[data-ed]').forEach(el=>el.onchange=()=>{const [id,f]=el.dataset.ed.split('|'),x=NODES[id];if(f==='inc')x.inc=el.checked?1:0;else if(f==='s'){x.s=el.checked?'Activa':'Inactiva';if(!el.checked)x.inc=0;else x.inc=1}else x[f]=el.value.trim()||x[f];toast('Guardado');if(f==='inc'||f==='s'||f==='tipo')rerender()});
+    $$('[data-ed]').forEach(el=>el.onchange=()=>{const [id,f]=el.dataset.ed.split('|'),x=NODES[id];if(f==='inc')x.inc=el.checked?1:0;else if(f==='s'){x.s=el.checked?'Activa':'Inactiva';if(!el.checked)x.inc=0;else x.inc=1}else if(f==='resp')x.resp=el.value;else x[f]=el.value.trim()||x[f];toast('Guardado');if(f==='inc'||f==='s'||f==='tipo')rerender()});
     $('#st-exp').onclick=()=>{Object.values(NODES).forEach(x=>{if(x.ch.length)CFG.open[x.id]=1});rerender()};
     $('#st-col').onclick=()=>{CFG.open={};rerender()};}
   if(r==='cfg-tipos'){$$('[data-tp]').forEach(b=>b.onclick=()=>{const t=CFG.tipos[+b.dataset.tp],f=b.dataset.f;t.f=t.f.includes(f)?t.f.filter(x=>x!==f):[...t.f,f];rerender()});
@@ -2476,7 +2494,7 @@ const ICONS={trash:'<path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6"
  x:'<path d="M6 6l12 12M18 6L6 18"/>',
  alert:'<path d="M12 3l10 18H2zM12 10v5M12 18h.01"/>',
  check:'<path d="M5 12l5 5L20 7"/>',
- camera:'<path d="M4 8h3l2-3h6l2 3h3v12H4z"/><circle cx="12" cy="13" r="3.5"/>',
+ lock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',camera:'<path d="M4 8h3l2-3h6l2 3h3v12H4z"/><circle cx="12" cy="13" r="3.5"/>',
  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
  eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
  send:'<path d="M12 19V5M5 12l7-7 7 7"/>',
