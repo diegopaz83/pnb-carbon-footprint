@@ -168,6 +168,46 @@ svg text{fill:var(--muted);font-family:var(--f-body);font-size:11px}
 /* Drawer */
 .drawer{position:fixed;top:0;right:0;bottom:0;width:min(460px,100%);background:var(--surface);border-left:1px solid var(--line);z-index:40;box-shadow:-12px 0 32px rgba(0,0,0,.18);display:flex;flex-direction:column;padding-block:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-bottom,0px));padding-left:20px;padding-right:max(20px,env(safe-area-inset-right,0px));gap:12px;overflow:auto}
 .scrim{position:fixed;inset:0;background:rgba(8,17,32,.45);z-index:35}
+.drawer.left{left:0;right:auto;width:min(540px,100%);border-left:0;border-right:1px solid var(--line);box-shadow:12px 0 32px rgba(0,0,0,.18);animation:drl .22s ease-out}
+@keyframes drl{from{transform:translateX(-24px);opacity:.4}to{transform:none;opacity:1}}
+.drawer .dbody{flex:1;overflow:auto}.drawer .dfoot{display:flex;justify-content:flex-end;gap:10px;padding-top:12px;border-top:1px solid var(--line)}
+.fz-d{display:grid;gap:12px;align-content:start}
+.fz-al{border-radius:10px;padding:12px 14px;font-size:.85rem;display:grid;gap:6px}
+.fz-al b{display:flex;align-items:center;gap:8px}.fz-al .ic{width:16px;height:16px}
+.fz-al ul{margin:0;padding-left:18px;display:grid;gap:4px}
+.fz-al.err{background:var(--bad-bg);color:var(--bad);border:1px solid color-mix(in srgb,var(--bad) 35%,transparent)}
+.fz-al.ok{background:var(--ok-bg);color:var(--ok)}
+.field.bad input,.field.bad select,.field.bad textarea{border-color:var(--bad)!important;box-shadow:0 0 0 3px color-mix(in srgb,var(--bad) 14%,transparent)}
+.field.bad>span{color:var(--bad)}
+.fz-p{padding-bottom:6px}
+.fz-f{border:0;padding:0 0 12px;margin:0;box-shadow:none;background:none;flex-wrap:wrap}
+.fz-f>label{display:flex;flex-direction:column;gap:4px;font-size:.72rem;color:var(--muted)}
+.fz-f>label.fz-s{flex:1 1 240px}.fz-f select{height:36px;border:1px solid var(--line-strong);border-radius:8px;background:var(--surface);color:var(--fg);padding:0 8px;font:inherit;font-size:.86rem}
+.fz-n{margin-left:auto;align-self:flex-end}
+.fz-sc{max-height:640px;overflow:auto;border-top:1px solid var(--line)}
+table.fz-t{table-layout:fixed;width:100%;font-size:.86rem}
+.fz-t th{position:sticky;top:0;z-index:1;background:var(--surface);white-space:nowrap}
+.fz-t td{vertical-align:top;padding-top:10px;padding-bottom:10px}
+.fz-t col.c-id{width:56px}.fz-t col.c-g{width:150px}.fz-t col.c-fe{width:170px}.fz-t col.c-u{width:110px}.fz-t col.c-st{width:120px}.fz-t col.c-k{width:44px}
+.fz-a{font-weight:600;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.fz-src{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.fz-id{color:var(--muted)}
+.fz-gas{display:inline-block;padding:2px 8px;border-radius:999px;background:var(--surface2);border:1px solid var(--line);font-size:.74rem;font-weight:600;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fz-u{line-height:1.5;font-size:.8rem}
+.fz-chip{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:999px;font-size:.74rem;font-weight:700;white-space:nowrap}
+.fz-chip .ic{width:12px;height:12px}
+.fz-chip.ok{background:var(--ok-bg);color:var(--ok)}.fz-chip.info{background:var(--accent-soft);color:var(--accent)}.fz-chip.err{background:var(--bad-bg);color:var(--bad)}
+.fz-t tr.bad td:first-child{box-shadow:inset 3px 0 0 var(--bad)}
+.fz-t tr.on td{background:color-mix(in srgb,var(--pnb-gold-500) 10%,var(--surface))}
+.fz-t .kb{opacity:1}.fz-t .kb-m{right:0;left:auto}
+@media (max-width:760px){.fz-sc{max-height:none;overflow:visible}
+ .regf.fz-f{flex-wrap:wrap!important;overflow:visible!important;gap:10px}.regf.fz-f>*{flex:1 1 100%!important;min-width:0!important}.regf.fz-f .regf-t{display:none}.fz-f .st-est{width:100%}.fz-f .st-est button{flex:1;justify-content:center;padding:8px 4px}.fz-n{margin:0}
+ .fz-t colgroup,.fz-t thead{display:none}.fz-t,.fz-t tbody{display:block;width:100%}
+ .fz-t tr{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;padding:12px 4px;border-bottom:1px solid var(--line)}
+ .fz-t td{display:block;padding:0!important;border:0!important;background:none!important}
+ .fz-t td:nth-child(1){width:34px;align-self:flex-start;padding-top:2px!important}.fz-t td:nth-child(2){flex:1 1 calc(100% - 90px);min-width:0}.fz-t td:nth-child(7){align-self:flex-start}
+ .fz-t td{order:3}.fz-t td:nth-child(1){order:0}.fz-t td:nth-child(2){order:1}.fz-t td:nth-child(7){order:2}.fz-t td:nth-child(3){margin-left:44px}.fz-t td:nth-child(5){text-align:left}.fz-t td:nth-child(6){flex:1 1 100%;margin-left:44px}
+ .fz-t tr.bad td:first-child{box-shadow:none}.fz-t tr.bad{box-shadow:inset 3px 0 0 var(--bad)}}
 .step{display:grid;grid-template-columns:28px 1fr;gap:10px;padding:10px 0;border-bottom:1px dashed var(--line)}
 .step .n{width:24px;height:24px;border-radius:50%;background:var(--pnb-gold-100);color:var(--pnb-gold-800);display:grid;place-items:center;font-weight:700;font-size:.75rem}
 .calc{font-family:var(--f-mono);font-size:.8rem;background:var(--surface2);border-radius:var(--r-md);padding:8px;margin-top:4px;overflow-x:auto}
@@ -1810,7 +1850,7 @@ function openCalc(r){const c=calc(r);
   <div class="result"><div><span>Emisión</span><b>${t2(c.t)} t CO2e</b></div>${r.bio?`<div class="bio"><span>CO2 biogénico</span><b>${t2(c.bio)} t</b></div>`:''}</div>
   <p class="note">PCG AR6 de la vigencia 2025: CH4 fósil 29,8 · CH4 biogénico 27 · N2O 273 · HFC-410A 2.255,5.</p>`;
   openDrawer(`<div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start"><div><div class="crumb">Ver cálculo · ${r.src}</div><h2 style="margin-top:4px">${r.q}</h2></div><button class="iconbtn" data-close type="button" aria-label="Cerrar">✕</button></div>${body}`)}
-function openDrawer(html){$('#layer').innerHTML=`<div class="scrim" data-close></div><aside class="drawer" role="dialog" aria-modal="true">${html}</aside>`;$$('#layer [data-close]').forEach(e=>e.onclick=closeDrawer);$('#layer .drawer button')?.focus()}
+function openDrawer(html,cls=''){$('#layer').innerHTML=`<div class="scrim" data-close></div><aside class="drawer ${cls}" role="dialog" aria-modal="true">${html}</aside>`;$$('#layer [data-close]').forEach(e=>e.onclick=closeDrawer);$('#layer .drawer button')?.focus()}
 function closeDrawer(){$('#layer').innerHTML=''}
 addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer()});
 
@@ -2065,30 +2105,47 @@ function validate(ur,uf,g){
   if(gas.startsWith('CO2E')){if(/hcfc|hfc|r22|r-/i.test(g))return ['err','Este gas es un refrigerante: el factor debe ser identidad (1 kg/kg) y el PCG se aplica aparte. Con el factor en CO2e el PCG se aplicaría dos veces (caso Solkaflam: 2.451,65 t en vez de 27,12 t).'];return ['info','Este factor ya está en CO2e: no se aplicará PCG.']}
   const gm=g.toUpperCase().replace(/\s*\(.*\)/,'').split(' ')[0];if(gas!==gm&&!(gas==='CH4'&&gm==='CH4'))return ['err',`El factor está en kg de ${gas} pero el gas elegido es ${g}.`];
   return ['ok',`La cadena cierra: ${ur} × ${uf} × PCG ${g} = kg CO2e.`]}
+const fzUr=e=>({'5':'Kg'}[e.id])||(e.u.split('/')[1]||'Kg').trim().replace(/^gal$/i,'Gal').replace(/^kwh$/i,'kWh');
+const fzP=x=>{const v=x*100;return (v===0?'0':v<1?v.toFixed(1).replace('.',','):Math.round(v))+' %'};
+const fzState=e=>validate(fzUr(e),e.u,e.g);
+function fzReq(e,ur,uf,g){const v=validate(ur,uf,g),r=[];if(v[0]==='err')r.push(v[1]);if(!String(e.src||'').trim())r.push('Falta la fuente bibliográfica.');if(!(+e.ip)&&!(+e.sp))r.push('Falta la incertidumbre del factor (inferior y superior).');if(!(+e.fe))r.push('El valor del factor no puede ser cero.');return {v,r}}
 V.factores=()=>{
-  const q=fz.q.toLowerCase();const list=D.factores.filter(f=>(!fz.g||f.g===fz.g)&&(!q||(f.a+' '+f.src).toLowerCase().includes(q)));
-  const gs=[...new Set(D.factores.map(f=>f.g))].sort();const e=FAC[fz.edit]||D.factores[0];
-  const ur=fz.ur||({'5':'Kg'}[e.id])||(e.u.split('/')[1]||'Kg').trim().replace(/^gal$/i,'Gal').replace(/^kwh$/i,'kWh');
-  const uf=fz.uf||e.u,g=fz.gg||e.g;const v=validate(ur,uf,g);
-  return `<div class="pagehead"><div><div class="crumb">Parametrización · Vigencia 2025</div><h1>Factores de emisión</h1><p>${D.factores.length} factores activos del SENA con fuente bibliográfica e incertidumbre (propuesta del 16-nov-2026).</p></div><button class="btn primary" id="fz-new" type="button">+ Nuevo factor</button></div>
-  <div class="grid g3">
-  <section class="panel"><div class="toolbar" style="margin-bottom:10px"><input id="fz-q" placeholder="Buscar actividad o fuente…" value="${esc(fz.q)}" style="flex:1;min-width:180px;padding:7px 9px;border:1px solid var(--line);border-radius:6px;background:var(--surface)"><select id="fz-g" style="padding:7px;border:1px solid var(--line);border-radius:6px;background:var(--surface)"><option value="">Todos los gases</option>${gs.map(x=>`<option ${x===fz.g?'selected':''}>${esc(x)}</option>`).join('')}</select><span class="note">${list.length} factores</span></div>
-  <div class="scroll" style="max-height:620px;overflow:auto"><table><thead><tr><th>#</th><th>Actividad</th><th>Gas</th><th class="num">FE</th><th>Unidad</th><th class="num">U inf / sup</th><th></th></tr></thead><tbody>
-  ${list.map(f=>`<tr ${f.id===fz.edit?'style="background:var(--accent-soft)"':''}><td class="mono">${f.id}</td><td style="min-width:200px">${esc(f.a)}<div class="note">${esc(f.src.slice(0,60))}${f.src.length>60?'…':''}</div></td><td style="white-space:nowrap">${esc(f.g)}</td><td class="num mono">${nfx.format(f.fe)}</td><td class="mono" style="white-space:nowrap">${esc(f.u)}</td><td class="num mono">${pct(f.ip)} / ${pct(f.sp)}</td><td><button class="btn sm" data-fe="${f.id}" type="button">Editar</button></td></tr>`).join('')}</tbody></table></div></section>
-  <aside class="grid" style="align-content:start"><section class="panel"><h2>Factor #${e.id} · ${esc(e.a)}</h2>
-    <div class="grid" style="gap:10px">
-    <label class="field"><span>Gas</span><select id="fz-gg">${gs.map(x=>`<option ${x===g?'selected':''}>${esc(x)}</option>`).join('')}</select></label>
-    <div class="form" style="grid-template-columns:1fr 1fr"><label class="field"><span>Valor del factor</span><input id="fz-fe" value="${nfx.format(e.fe)}" inputmode="decimal"></label>
-    <label class="field"><span>Unidad de registro de la pregunta</span><select id="fz-ur">${[...new Set([ur,...UNITS_REG])].map(x=>`<option ${x===ur?'selected':''}>${x}</option>`).join('')}</select></label></div>
-    <label class="field"><span>Unidad del factor</span><select id="fz-uf">${[...new Set([uf,...UNITS_FE])].map(x=>`<option ${x===uf?'selected':''}>${esc(x)}</option>`).join('')}</select></label>
-    <div class="val ${v[0]}" role="status"><b>${v[0]==='err'?'✕':v[0]==='info'?'i':'✓'}</b><span>${v[1]}</span></div>
-    <div class="form" style="grid-template-columns:1fr 1fr"><label class="field"><span>U inferior (fracción)</span><input value="${nfx.format(e.ip)}"></label><label class="field"><span>U superior (fracción)</span><input value="${nfx.format(e.sp)}"></label></div>
-    <label class="field"><span>Fuente bibliográfica</span><textarea rows="3">${esc(e.src)}</textarea></label>
-    <div class="toolbar"><button class="btn primary" type="button" id="fz-save" ${v[0]==='err'?'disabled style="opacity:.5;cursor:not-allowed"':''}>Guardar factor</button><span class="note">${v[0]==='err'?'No se puede activar hasta que la cadena de unidades cierre.':''}</span></div></div></section>
-  <section class="panel"><h2>Cambios 2025 → 2026<span class="fict">*</span></h2><table><thead><tr><th>Factor</th><th class="num">2025</th><th class="num">2026</th></tr></thead><tbody>
-   <tr><td>Energía eléctrica (kg CO2e/kWh)</td><td class="num mono">0,22</td><td class="num mono">0,126</td></tr><tr><td>Diésel móvil CO2 (kg/gal)</td><td class="num mono">10,18</td><td class="num mono">10,18</td></tr><tr><td>Solkaflam HCFC-123</td><td class="num mono">90,4 CO2e</td><td class="num mono">1 kg/kg</td></tr><tr><td>% biodiésel en mezcla</td><td class="num mono">10 %</td><td class="num mono">12 %</td></tr></tbody></table></section></aside></div>`;
+  const q=fz.q.toLowerCase();const list=D.factores.filter(f=>!f.del&&(!fz.g||f.g===fz.g)&&(!q||(f.id+' '+f.a+' '+f.src+' '+f.g).toLowerCase().includes(q))&&(!fz.st||(fz.st==='err')===(fzReq(f,fzUr(f),f.u,f.g).r.length>0)));
+  const gs=[...new Set(D.factores.map(f=>f.g))].sort();const nErr=D.factores.filter(f=>!f.del&&fzReq(f,fzUr(f),f.u,f.g).r.length).length;
+  const kb=f=>`<span class="kb-w"><button type="button" class="kb" data-fkb="${f.id}" aria-haspopup="menu" aria-expanded="${CFG.kb==='f'+f.id}" aria-label="Acciones del factor ${f.id}">⋮</button>${CFG.kb==='f'+f.id?`<div class="kb-m" role="menu"><button type="button" role="menuitem" data-fe="${f.id}">Editar</button><button type="button" role="menuitem" data-fdup="${f.id}">Duplicar</button><button type="button" role="menuitem" data-ftz="${f.id}">Ver en trazabilidad</button><button type="button" role="menuitem" class="del" data-fdel="${f.id}">Eliminar</button></div>`:''}</span>`;
+  return `<div class="pagehead"><div><div class="crumb">Parametrización · Vigencia 2025</div><h1>Factores de emisión</h1><p>${D.factores.filter(f=>!f.del).length} factores activos con fuente bibliográfica e incertidumbre. Usa ⋮ › Editar para cambiar uno.</p></div><button class="btn primary" id="fz-new" type="button">+ Nuevo factor</button></div>
+  <section class="panel fz-p"><div class="regf fz-f"><span class="regf-t" title="Filtros">${ic('filter')}</span>
+    <label class="fz-s"><span>Buscar</span><input id="fz-q" class="search" placeholder="Número, actividad, gas o fuente" value="${esc(fz.q)}"></label>
+    <label><span>Gas</span><select id="fz-g"><option value="">Todos</option>${gs.map(x=>`<option ${x===fz.g?'selected':''}>${esc(x)}</option>`).join('')}</select></label>
+    <div class="ms-l st-estw"><span>Estado</span><div class="s1-seg st-est">${[['','Todos',D.factores.filter(f=>!f.del).length],['ok','Listos',D.factores.filter(f=>!f.del).length-nErr],['err','Por revisar',nErr]].map(([k,l,n])=>`<button type="button" class="${(fz.st||'')===k?'on':''}" data-fst="${k}">${l} <b>${n}</b></button>`).join('')}</div></div>
+    <span class="note fz-n">${list.length} factor${list.length===1?'':'es'}</span></div>
+  <div class="fz-sc"><table class="fz-t"><colgroup><col class="c-id"><col><col class="c-g"><col class="c-fe"><col class="c-u"><col class="c-st"><col class="c-k"></colgroup>
+  <thead><tr><th>#</th><th>Actividad y fuente</th><th>Gas</th><th>Factor</th><th class="num" title="Incertidumbre inferior y superior del factor">Incert.</th><th>Estado</th><th></th></tr></thead><tbody>
+  ${list.map(f=>{const R=fzReq(f,fzUr(f),f.u,f.g),bad=R.r.length;return `<tr class="${f.id===fz.edit&&fz.open?'on':''}${bad?' bad':''}"><td class="mono fz-id">${f.id}</td><td><div class="fz-a" title="${esc(f.a)}">${esc(f.a)}</div><div class="note fz-src" title="${esc(f.src)}">${esc(f.src)||'<i>Sin fuente</i>'}</div></td><td><span class="fz-gas">${esc(f.g)}</span></td><td><b class="mono">${nfx.format(f.fe)}</b><div class="note mono">${esc(f.u)}</div></td><td class="num mono fz-u">${f.ip||f.sp?`−${fzP(f.ip)}<br>+${fzP(f.sp)}`:'<span class="note">Sin dato</span>'}</td><td>${bad?`<span class="fz-chip err" title="${esc(R.r.join(' '))}">${ic('alert')||'!'} Revisar</span>`:R.v[0]==='info'?'<span class="fz-chip info" title="Factor en CO2e: no aplica PCG">Listo · CO2e</span>':'<span class="fz-chip ok">Listo</span>'}</td><td>${kb(f)}</td></tr>`}).join('')||'<tr><td colspan="7" class="note" style="padding:24px;text-align:center">Ningún factor coincide.</td></tr>'}</tbody></table></div></section>
+  <section class="panel"><h2>Cambios 2025 → 2026<span class="fict">*</span></h2><div class="scroll"><table><thead><tr><th>Factor</th><th class="num">2025</th><th class="num">2026</th></tr></thead><tbody>
+   <tr><td>Energía eléctrica (kg CO2e/kWh)</td><td class="num mono">0,22</td><td class="num mono">0,126</td></tr><tr><td>Diésel móvil CO2 (kg/gal)</td><td class="num mono">10,18</td><td class="num mono">10,18</td></tr><tr><td>Solkaflam HCFC-123</td><td class="num mono">90,4 CO2e</td><td class="num mono">1 kg/kg</td></tr><tr><td>% biodiésel en mezcla</td><td class="num mono">10 %</td><td class="num mono">12 %</td></tr></tbody></table></div></section>`;
 };
-
+function fzDrawer(){const isNew=fz.edit==='new';const e=isNew?(fz.nw=fz.nw||{id:'nuevo',a:'',g:'CO2',fe:0,u:'Kg CO2 / Gal',src:'',ip:0,sp:0}):FAC[fz.edit];if(!e)return;
+  const gs=[...new Set(D.factores.map(f=>f.g))].sort();const ur=fz.ur||fzUr(e),uf=fz.uf||e.u,g=fz.gg||e.g;const R=fzReq(e,ur,uf,g),v=R.v;
+  openDrawer(`<div class="dhead"><div><div class="crumb">Factores de emisión</div><h2>${isNew?'Nuevo factor':'Factor #'+e.id}</h2></div><button class="iconbtn" data-close type="button" aria-label="Cerrar">✕</button></div>
+  <div class="dbody fz-d">
+    ${R.r.length?`<div class="fz-al err" role="alert"><b>${ic('alert')||'!'} Requiere atención antes de guardar</b><ul>${R.r.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:`<div class="fz-al ok" role="status"><b>${ic('check')} La cadena de unidades cierra</b><span>${v[0]==='info'?esc(v[1]):'Listo para guardar.'}</span></div>`}
+    <label class="field"><span>Actividad</span><input id="fd-a" value="${esc(e.a)}" placeholder="Ej. Diésel B10 fuente móvil"></label>
+    <div class="form" style="grid-template-columns:1fr 1fr">
+      <label class="field"><span>Gas</span><select id="fz-gg">${[...new Set([g,...gs])].map(x=>`<option ${x===g?'selected':''}>${esc(x)}</option>`).join('')}</select></label>
+      <label class="field"><span>Valor del factor</span><input id="fd-fe" value="${nfx.format(e.fe)}" inputmode="decimal"></label></div>
+    <div class="form" style="grid-template-columns:1fr 1fr">
+      <label class="field${v[0]==='err'?' bad':''}"><span>Unidad de la pregunta</span><select id="fz-ur">${[...new Set([ur,...UNITS_REG])].map(x=>`<option ${x===ur?'selected':''}>${x}</option>`).join('')}</select></label>
+      <label class="field${v[0]==='err'?' bad':''}"><span>Unidad del factor</span><select id="fz-uf">${[...new Set([uf,...UNITS_FE])].map(x=>`<option ${x===uf?'selected':''}>${esc(x)}</option>`).join('')}</select></label></div>
+    <div class="form" style="grid-template-columns:1fr 1fr"><label class="field${!(+e.ip)&&!(+e.sp)?' bad':''}"><span>Incertidumbre inferior (%)</span><input id="fd-ip" value="${Math.round(e.ip*100)}" inputmode="decimal"></label><label class="field${!(+e.ip)&&!(+e.sp)?' bad':''}"><span>Incertidumbre superior (%)</span><input id="fd-sp" value="${Math.round(e.sp*100)}" inputmode="decimal"></label></div>
+    <label class="field${String(e.src||'').trim()?'':' bad'}"><span>Fuente bibliográfica</span><textarea id="fd-src" rows="4">${esc(e.src)}</textarea></label>
+  </div>
+  <div class="dfoot"><button class="btn" data-close type="button">Cancelar</button><button class="btn primary" type="button" id="fz-save" ${R.r.length?'disabled':''}>${isNew?'Crear factor':'Guardar factor'}</button></div>`,'left');
+  const keep=()=>{e.a=$('#fd-a').value;e.fe=parseFloat(String($('#fd-fe').value).replace(/\./g,'').replace(',','.'))||0;e.ip=(parseFloat(String($('#fd-ip').value).replace(',','.'))||0)/100;e.sp=(parseFloat(String($('#fd-sp').value).replace(',','.'))||0)/100;e.src=$('#fd-src').value};
+  const upd=()=>{keep();const y=document.querySelector('.drawer .dbody').scrollTop;fzDrawer();document.querySelector('.drawer .dbody').scrollTop=y};
+  $('#fz-ur').onchange=x=>{fz.ur=x.target.value;upd()};$('#fz-uf').onchange=x=>{fz.uf=x.target.value;upd()};$('#fz-gg').onchange=x=>{fz.gg=x.target.value;upd()};
+  ['#fd-fe','#fd-ip','#fd-sp','#fd-src'].forEach(k=>{const el=$(k);el.onchange=upd});
+  $('#fz-save').onclick=()=>{keep();if(fz.uf)e.u=fz.uf;if(fz.gg)e.g=fz.gg;if(isNew){const id=String(Math.max(...D.factores.map(f=>+f.id||0))+1);e.id=id;D.factores.unshift(e);FAC[id]=e;fz.nw=null}closeDrawer();fz.open=false;fz.edit=e.id;rerender();toast(isNew?'Factor #'+e.id+' creado':'Factor #'+e.id+' guardado')}}
 /* ---- Informe PDF ---- */
 function pdfReport(){const PEND='<span class="r-pend">Pendiente por diligenciar</span>';
   const LG=(document.querySelector('.brand svg.logo')||{}).outerHTML||'<b>PNB</b>';
@@ -2801,9 +2858,14 @@ function bind(r){
   if(r==='incertidumbre')$$('[data-ut]').forEach(b=>b.onclick=()=>{uTab=b.dataset.ut;rerender()});
   if(r==='trazabilidad'&&TRAZA){const q=$('#tz-q');q.oninput=()=>{tz.q=q.value;tz.pg=0;const p=q.selectionStart;render();const n=$('#tz-q');n.focus();n.setSelectionRange(p,p)};$('#tz-fu').onchange=e=>{tz.fu=e.target.value;tz.pg=0;render()};$('#tz-prev').onclick=()=>{tz.pg--;rerender()};$('#tz-next').onclick=()=>{tz.pg++;rerender()};$$('[data-tz]').forEach(tr=>{tr.onclick=()=>openTraza(+tr.dataset.tz);tr.onkeydown=e=>{if(e.key==='Enter')openTraza(+tr.dataset.tz)}})}
   if(r==='factores'){const q=$('#fz-q');q.oninput=()=>{fz.q=q.value;const p=q.selectionStart;render();const n=$('#fz-q');n.focus();n.setSelectionRange(p,p)};$('#fz-g').onchange=e=>{fz.g=e.target.value;render()};
-    $$('[data-fe]').forEach(b=>b.onclick=()=>{fz.edit=b.dataset.fe;fz.ur=fz.uf=fz.gg=null;rerender()});
-    $('#fz-ur').onchange=e=>{fz.ur=e.target.value;rerender()};$('#fz-uf').onchange=e=>{fz.uf=e.target.value;rerender()};$('#fz-gg').onchange=e=>{fz.gg=e.target.value;rerender()};
-    $('#fz-save').onclick=()=>toast('Factor guardado para la vigencia 2025');$('#fz-new').onclick=()=>toast('Nuevo factor: elija actividad, gas y unidades; la validación corre en vivo')}
+    $$('[data-fst]').forEach(b=>b.onclick=()=>{fz.st=b.dataset.fst;rerender()});
+    $$('[data-fkb]').forEach(b=>b.onclick=e=>{e.stopPropagation();const k='f'+b.dataset.fkb;CFG.kb=CFG.kb===k?null:k;rerender();document.querySelector('.kb-m button')?.focus()});
+    const fk=()=>{CFG.kb=null};
+    $$('[data-fe]').forEach(b=>b.onclick=e=>{e.stopPropagation();fk();fz.edit=b.dataset.fe;fz.open=true;fz.ur=fz.uf=fz.gg=null;rerender();fzDrawer()});
+    $$('[data-fdup]').forEach(b=>b.onclick=e=>{e.stopPropagation();fk();const o=FAC[b.dataset.fdup];fz.nw=Object.assign({},o,{id:'nuevo',a:o.a+' (copia)'});fz.edit='new';fz.open=true;fz.ur=fz.uf=fz.gg=null;rerender();fzDrawer()});
+    $$('[data-ftz]').forEach(b=>b.onclick=e=>{e.stopPropagation();fk();tz.q=FAC[b.dataset.ftz].a;tz.pg=0;location.hash='trazabilidad'});
+    $$('[data-fdel]').forEach(b=>b.onclick=e=>{e.stopPropagation();fk();const f=FAC[b.dataset.fdel];rerender();confirmModal({title:'¿Eliminar el factor #'+f.id+'?',body:`<p><b>${esc(f.a)}</b> deja de usarse en los cálculos de la vigencia 2025. Los registros que lo usan quedarán sin factor hasta asignarles otro.</p>`,ok:'Eliminar',danger:true,onOk:()=>{f.del=true;rerender();toast('Factor #'+f.id+' eliminado')}})});
+    $('#fz-new').onclick=()=>{fz.nw=null;fz.edit='new';fz.open=true;fz.ur=fz.uf=fz.gg=null;fzDrawer()}}
   if(r==='informe'){wzBind()}
   if(r==='compensaciones')$('#cp-add').onclick=()=>toast('Formulario: proyecto, estándar, seriales, unidades, fecha y certificado');
 }
