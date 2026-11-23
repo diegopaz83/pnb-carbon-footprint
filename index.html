@@ -1145,6 +1145,16 @@ body:has(.rm-cta) .toast{bottom:92px;z-index:95}body:has(.rm-sheet) .toast{botto
 .qa-yn button{padding:9px 22px;min-width:64px}
 .qa-yn button[aria-checked="false"]{color:var(--muted)}
 @media (max-width:760px){.qa-top{top:64px;gap:10px 18px;padding:12px 14px}.qa-k b{font-size:1.4rem}.qa-acts{margin-left:0;width:100%}.qa-acts .btn{flex:1}}
+
+.u-kb{width:44px;text-align:right}
+.u-kb .kb{opacity:1}
+.u-kb .kb-m{left:auto;right:0}
+.u-cus{font-size:.7rem;font-weight:700;color:#7a5d00;background:#fbf1cf;border-radius:999px;padding:2px 8px;white-space:nowrap}
+.up{margin-top:18px;padding-top:14px;border-top:1px solid var(--line)}.up h3{margin:0 0 4px;font-size:1rem}
+.up-g{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:12px 0 4px}
+.up-r{display:flex;align-items:center;gap:10px;padding:7px 8px;border-radius:8px;font-size:.88rem;cursor:pointer}
+.up-r:hover{background:var(--surface2)}.up-r span{flex:1}.up-r small{color:var(--muted);font-size:.72rem}
+.up-r.ch{background:#fbf1cf}.up-r em{font-style:normal;font-size:.74rem;font-weight:700;color:#7a5d00;white-space:nowrap}
 </style>
 
 <section class="landing" id="landing" hidden>
@@ -2142,20 +2152,25 @@ V['cfg-usuarios']=()=>{const t=CFG.utab;
   return cfgHead('Usuarios y roles','Usuarios y roles','Cada usuario tiene un solo rol y un alcance en el árbol. Así no hay permisos que se traslapen.',t==='u'?`<button class="btn primary" id="us-new" type="button">Invitar usuario</button>`:t==='d'?`<button class="btn primary" id="dl-new" type="button">Nueva delegación</button>`:'')+`
   <div class="tabs" role="tablist">${[['u','Usuarios'],['r','Roles y permisos'],['d','Delegación de tareas']].map(x=>`<button type="button" role="tab" aria-selected="${t===x[0]}" class="${t===x[0]?'on':''}" data-ut2="${x[0]}">${x[1]}</button>`).join('')}</div>
   ${t==='u'?`<section class="panel"><div class="scroll"><table><thead><tr><th>Usuario</th><th>Correo</th><th>Rol</th><th>Alcance</th><th>Estado</th><th></th></tr></thead><tbody>
-    ${CFG.users.map((u,i)=>`<tr><td>${PHOTO_BY_NAME[u.n]?`<img class="avatar sm ph" src="${PHOTO[PHOTO_BY_NAME[u.n]]}" alt="" aria-hidden="true">`:`<span class="avatar sm" aria-hidden="true">${esc(u.n.split(' ').map(w=>w[0]).join('').slice(0,2))}</span>`} <b>${esc(u.n)}</b>${F}</td><td class="mono">${esc(u.e)}</td><td>${badge(CFG.roles[u.r],u.r===0?'gold':'n')}</td><td>${esc(u.a)}</td><td>${stBadge(u.s)}</td><td><button class="btn sm" type="button" data-ued="${i}">Editar</button></td></tr>`).join('')}</tbody></table></div></section>`:''}
+    ${CFG.users.map((u,i)=>`<tr><td>${PHOTO_BY_NAME[u.n]?`<img class="avatar sm ph" src="${PHOTO[PHOTO_BY_NAME[u.n]]}" alt="" aria-hidden="true">`:`<span class="avatar sm" aria-hidden="true">${esc(u.n.split(' ').map(w=>w[0]).join('').slice(0,2))}</span>`} <b>${esc(u.n)}</b>${F}</td><td class="mono">${esc(u.e)}</td><td>${badge(CFG.roles[u.r],u.r===0?'gold':'n')}${u.ov&&Object.keys(u.ov).length?` <span class="u-cus" title="Tiene permisos distintos a los de su rol">+ ${Object.keys(u.ov).length} ajuste${Object.keys(u.ov).length>1?'s':''}</span>`:''}</td><td>${esc(u.a)}</td><td>${stBadge(u.s)}</td><td class="u-kb"><span class="kb-w"><button type="button" class="kb" data-ukb="${i}" aria-haspopup="menu" aria-expanded="${CFG.kb==='u'+i}" aria-label="Acciones de ${esc(u.n)}">⋮</button>${CFG.kb==='u'+i?`<div class="kb-m" role="menu"><button type="button" role="menuitem" data-ued="${i}">Editar datos</button><button type="button" role="menuitem" data-uperm="${i}">Roles y permisos</button><button type="button" role="menuitem" data-ust="${i}">${u.s==='Activo'?'Desactivar':'Activar'}</button><button type="button" role="menuitem" class="del" data-udel="${i}">Eliminar</button></div>`:''}</span></td></tr>`).join('')}</tbody></table></div></section>`:''}
   ${t==='r'?`<section class="panel"><div class="scroll"><table class="matrix"><thead><tr><th>Módulo</th><th>Permiso</th>${CFG.roles.map(r=>`<th class="c">${esc(r)}</th>`).join('')}</tr></thead><tbody>
     ${CFG.perms.map((p,i)=>`<tr><td class="muted">${esc(p[0])}</td><td>${esc(p[1])}</td>${p[2].map((v,j)=>`<td class="c"><input type="checkbox" data-pm="${i}:${j}" ${v?'checked':''} aria-label="${esc(CFG.roles[j]+': '+p[1])}"></td>`).join('')}</tr>`).join('')}</tbody></table></div>
     <p class="note" style="margin-top:10px">El alcance del usuario limita cada permiso a su rama: un gestor de unidad de Antioquia solo ve Antioquia.</p></section>`:''}
   ${t==='d'?`<section class="panel"><p class="muted" style="margin-top:0">Cuando alguien sale a vacaciones o cambia de cargo, sus tareas pasan a otra persona por un periodo. Las notificaciones le llegan a quien recibe.</p><div class="scroll"><table><thead><tr><th>De</th><th>Para</th><th>Desde</th><th>Hasta</th><th>Motivo</th></tr></thead><tbody>${CFG.deleg.map(d=>`<tr><td>${esc(d.de)}</td><td>${esc(d.a)}</td><td class="mono">${d.desde}</td><td class="mono">${d.hasta}</td><td>${esc(d.m)}</td></tr>`).join('')}</tbody></table></div></section>`:''}`};
-function userDrawer(i){const u=i==null?{n:'',e:'',r:3,a:'',s:'Activo'}:CFG.users[i];
+function userDrawer(i,focusPerm){const u=i==null?{n:'',e:'',r:3,a:'',s:'Activo',ov:{}}:CFG.users[i];let ov={...(u.ov||{})};
   const opts=['Toda la organización',...TREE.map(r=>r.n),...TREE.flatMap(r=>r.ch.map(c=>c.n))];
   openDrawer(`<div class="dhead"><div><div class="crumb">Usuarios</div><h2>${i==null?'Invitar usuario':'Editar usuario'}</h2></div><button class="btn sm" data-close type="button">Cerrar</button></div>
   <div class="dbody"><label class="field"><span>Nombre</span><input id="ud-n" value="${esc(u.n)}"></label><label class="field"><span>Correo</span><input id="ud-e" type="email" value="${esc(u.e)}"></label>
   <label class="field"><span>Rol (uno por usuario)</span><select id="ud-r">${CFG.roles.map((r,j)=>`<option value="${j}" ${j===u.r?'selected':''}>${esc(r)}</option>`).join('')}</select></label>
   <label class="field"><span>Alcance</span><input id="ud-a" list="ud-al" value="${esc(u.a)}" placeholder="Escribe una regional, centro o sede"><datalist id="ud-al">${opts.map(o=>`<option value="${esc(o)}">`).join('')}</datalist></label>
-  <div class="qrow"><div class="t"><b>Activo</b></div>${sw('id="ud-s"',u.s==='Activo','Activo')}</div></div>
+  <div class="qrow"><div class="t"><b>Activo</b></div>${sw('id="ud-s"',u.s==='Activo','Activo')}</div>
+  <div class="up" id="ud-perm"><h3>Permisos de esta persona</h3><p class="note">Parte de los permisos de su rol. Puedes quitarle o darle algo puntual solo a ella; lo que cambies queda marcado.</p><div id="ud-pl"></div></div></div>
   <div class="toolbar dfoot"><span class="spacer"></span><button class="btn primary" id="ud-ok" type="button">${i==null?'Enviar invitación':'Guardar'}</button></div>`);
-  $('#ud-ok').onclick=()=>{const n={n:$('#ud-n').value.trim(),e:$('#ud-e').value.trim(),r:+$('#ud-r').value,a:$('#ud-a').value.trim()||'Toda la organización',s:$('#ud-s').checked?'Activo':'Inactivo'};
+  const drawP=()=>{const r=+$('#ud-r').value;let last='';$('#ud-pl').innerHTML=CFG.perms.map((p,k)=>{const def=!!p[2][r],on=k in ov?ov[k]:def,ch=k in ov;const h=p[0]!==last?`<div class="up-g">${esc(p[0])}</div>`:'';last=p[0];return h+`<label class="up-r${ch?' ch':''}"><input type="checkbox" data-up="${k}" ${on?'checked':''}><span>${esc(p[1])}</span>${ch?`<em>${on?'Agregado':'Quitado'} · <button type="button" class="lnk" data-upr="${k}">deshacer</button></em>`:`<small>${def?'Del rol':''}</small>`}</label>`}).join('');
+    $$('#ud-pl [data-up]').forEach(c=>c.onchange=()=>{const k=+c.dataset.up,def=!!CFG.perms[k][2][r];if(c.checked===def)delete ov[k];else ov[k]=c.checked;drawP()});
+    $$('#ud-pl [data-upr]').forEach(b=>b.onclick=e=>{e.preventDefault();delete ov[+b.dataset.upr];drawP()})};
+  drawP();$('#ud-r').onchange=()=>{ov={};drawP()};if(focusPerm)setTimeout(()=>$('#ud-perm').scrollIntoView({block:'start'}),30);
+  $('#ud-ok').onclick=()=>{const n={n:$('#ud-n').value.trim(),e:$('#ud-e').value.trim(),r:+$('#ud-r').value,a:$('#ud-a').value.trim()||'Toda la organización',s:$('#ud-s').checked?'Activo':'Inactivo',ov};
     if(!n.n||!n.e){toast('Escribe nombre y correo');return}if(i==null)CFG.users.push(n);else CFG.users[i]=n;closeDrawer();toast(i==null?`Invitación enviada a ${n.e}`:'Usuario guardado');rerender()}}
 
 /* Notificaciones */
@@ -2210,7 +2225,12 @@ function bindCfg(r){
     $('#vg-copy').onclick=()=>{const l=CFG.vig[CFG.vig.length-1];CFG.vig.push({y:l.y+1,ini:(l.y+1)+'-01-01',fin:(l.y+1)+'-12-31',pcg:l.pcg,s:'Abierta'});CFG.vsel=l.y+1;toast(`Vigencia ${l.y+1} creada: se copiaron factores, PCG y % biogénico de ${l.y}. Las mediciones no se copian.`);rerender()};
     $('#vg-ex')&&($('#vg-ex').onclick=()=>toast('Formulario: fuente, alcance y justificación'))}
   if(r==='cfg-usuarios'){$$('[data-ut2]').forEach(b=>b.onclick=()=>{CFG.utab=b.dataset.ut2;rerender()});
-    $('#us-new')&&($('#us-new').onclick=()=>userDrawer(null));$$('[data-ued]').forEach(b=>b.onclick=()=>userDrawer(+b.dataset.ued));
+    $('#us-new')&&($('#us-new').onclick=()=>userDrawer(null));$$('[data-ued]').forEach(b=>b.onclick=()=>{CFG.kb=null;rerender();userDrawer(+b.dataset.ued)});
+    $$('[data-ukb]').forEach(b=>b.onclick=e=>{e.stopPropagation();const k='u'+b.dataset.ukb;CFG.kb=CFG.kb===k?null:k;rerender();document.querySelector('.kb-m button')?.focus()});
+    $$('[data-uperm]').forEach(b=>b.onclick=()=>{CFG.kb=null;rerender();userDrawer(+b.dataset.uperm,true)});
+    $$('[data-ust]').forEach(b=>b.onclick=()=>{const u=CFG.users[+b.dataset.ust];u.s=u.s==='Activo'?'Inactivo':'Activo';CFG.kb=null;toast(`${u.n}: ${u.s.toLowerCase()}${u.s==='Inactivo'?'. Ya no puede entrar, su historial se conserva':''}`);rerender()});
+    $$('[data-udel]').forEach(b=>b.onclick=()=>{const i=+b.dataset.udel,u=CFG.users[i];CFG.kb=null;rerender();const dl=CFG.deleg.filter(d=>d.de===u.n||d.a===u.n).length;
+      confirmModal({title:'¿Eliminar usuario?',body:`<b>${esc(u.n)}</b> <span class="mono note">${esc(u.e)}</span><div class="mdl-warn">Pierde el acceso de inmediato. Los datos que registró y su historial <b>se conservan</b> para la auditoría.${dl?`<br>Tiene ${dl} delegación${dl>1?'es':''} activa${dl>1?'s':''} que también se cancela${dl>1?'n':''}.`:''}</div><p class="note" style="margin:8px 0 0">Si solo sale por un tiempo, mejor desactívalo o delega sus tareas.</p>`,ok:'Eliminar usuario',danger:true,onOk:()=>{CFG.users.splice(i,1);CFG.deleg=CFG.deleg.filter(d=>d.de!==u.n&&d.a!==u.n);toast(`${u.n} eliminado`);rerender()}})});
     $$('[data-pm]').forEach(c=>c.onchange=()=>{const[i,j]=c.dataset.pm.split(':').map(Number);CFG.perms[i][2][j]=c.checked?1:0;toast(`${CFG.roles[j]}: permiso ${c.checked?'otorgado':'retirado'}`)});
     $('#dl-new')&&($('#dl-new').onclick=()=>toast('Formulario: de, para, desde, hasta y motivo'))}
   if(r==='cfg-notif'){const e=CFG.ev.find(x=>x.k===CFG.evsel);const upd=()=>{e.asunto=$('#nt-s').value;e.cuerpo=$('#nt-b').value;$('#nt-prev').innerHTML=`<div class="mp-s">${fillT(e.asunto)}</div><div>${fillT(e.cuerpo)}</div><div class="mp-f">Carbon Footprint · PNB Digital</div>`};
