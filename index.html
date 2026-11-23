@@ -925,7 +925,7 @@ body.pdf-on{overflow:hidden}
 .wz-sug-a{display:flex;gap:8px;flex-wrap:wrap}
 .r-pend{color:#b08d1a;font-style:italic}
 .st-kpis{display:flex;align-items:center;gap:28px;padding:14px 20px;margin-bottom:0;border:1px solid var(--line);border-radius:var(--r-lg,12px);background:var(--surface)}
-.st-kpis>div{display:flex;align-items:baseline;gap:8px}.st-kpis b{font-size:1.5rem;font-weight:800}.st-kpis span{color:var(--muted);font-size:.85rem}.st-kpis .note{margin:0 0 0 auto}
+.st-kpis>div{display:flex;align-items:baseline;gap:8px}.st-kpis b{font-size:1.5rem;font-weight:800}.st-kpis span{color:var(--muted);font-size:.85rem}.st-kpis .note{margin:0 0 0 auto}.st-kpis.f{border-color:var(--pnb-gold-300);background:color-mix(in srgb,var(--pnb-gold-500) 8%,var(--surface))}
 @media (max-width:640px){.st-kpis{flex-wrap:wrap;gap:14px}.st-kpis .note{margin:0;flex-basis:100%}}
 .st-mxp{margin-top:14px}
 .regf.st-f{flex-wrap:wrap}
@@ -2346,12 +2346,13 @@ V['cfg-estructura']=()=>{if(qSede){qSede=null;qTs=null;qState=null}const x=NODES
   <section class="panel"><h2>Niveles</h2><p class="note">De 1 a 5 niveles. El último nivel es donde se registran los datos.</p>
    <div class="lvrow">${lv.map((l,i)=>`<div class="lvbox"><span class="lvn">${i+1}</span><input data-lv="${i}" value="${esc(l)}" aria-label="Nombre del nivel ${i+1}">${i===lv.length-1?'<small>Registra datos</small>':''}</div>${i<lv.length-1?'<span class="lvsep">›</span>':''}`).join('')}
    ${lv.length<5?'<button class="btn sm" id="lv-add" type="button">Agregar nivel</button>':''}${lv.length>1?'<button class="btn sm" id="lv-del" type="button">Quitar último</button>':''}</div></section>
-  <div class="st-kpis">${lv.map((l,i)=>`<div><b>${countLv(i)}</b><span>${esc(l)}${countLv(i)===1?'':'s'}</span></div>`).join('')}<p class="note">Edita directo en la matriz. Los cambios se guardan solos.</p></div>
+  <div class="st-kpis${stAny()?' f':''}">${lv.map((l,i)=>{const t=countLv(i),v=stAny()?Object.values(NODES).filter(x=>x.lv===i&&(x.ch.length?stVis(x):stIn(x))).length:t;return `<div><b>${v}</b><span>${stAny()?`de ${t} `:''}${esc(l).toLowerCase()}${t===1?'':(/[aeiou]$/i.test(l)?'s':'es')}</span></div>`}).join('')}<p class="note">${stAny()?'Conteos según los filtros activos.':'Edita directo en la matriz. Los cambios se guardan solos.'}</p></div>
   ${stFilters()}
   <section class="panel st-mxp"><div class="toolbar" style="justify-content:space-between;margin-bottom:10px"><h2 style="margin:0">Unidades <span class="note" style="font-weight:400">· ${stCount()} visibles</span></h2><span><button type="button" class="btn sm primary" id="st-add1">${ic('plus')}Agregar ${esc((lv[0]||'').toLowerCase())}</button> <button type="button" class="btn sm" id="st-exp">Expandir todo</button> <button type="button" class="btn sm" id="st-col">Contraer todo</button></span></div>
   <div class="scroll"><table class="st-mx"><colgroup><col class="c-n"><col class="c-t"><col class="c-s"><col class="c-s"><col class="c-r"><col class="c-p"></colgroup>
   <thead><tr><th>${lv.map(esc).join(' › ')}</th><th>Tipo de unidad</th><th>Activa</th><th>Incluida</th><th>Responsable</th><th title="Preguntas del registro mensual">Preguntas</th></tr></thead>
   <tbody>${TREE.map(stRow).join('')||`<tr><td colspan="6" class="note" style="padding:24px;text-align:center">Ninguna unidad cumple los filtros.</td></tr>`}</tbody></table></div></section>`};
+function stLeafPass(ov){const k=Object.keys(ov),bk={};k.forEach(x=>{bk[x]=REGF[x];REGF[x]=ov[x]});const r=Object.values(NODES).filter(x=>!x.ch.length&&stIn(x));k.forEach(x=>REGF[x]=bk[x]);return r}
 const stAny=()=>REGF.sreg.length||REGF.scen.length||REGF.stip.length||REGF.sexc||REGF.sina||REGF.sest||CFG.q;
 function stOK(x){if(REGF.stip.length&&!REGF.stip.includes(x.tipo))return false;if(REGF.sexc&&x.inc)return false;if(REGF.sina&&x.s==='Activa')return false;if(REGF.sest==='a'&&x.s!=='Activa')return false;if(REGF.sest==='i'&&x.s==='Activa')return false;
   if(CFG.q){const q=CFG.q.toLowerCase();if(!x.n.toLowerCase().includes(q)&&!x.code.toLowerCase().includes(q))return false}return true}
@@ -2379,14 +2380,14 @@ function confirmModal(o){document.querySelectorAll('.mdl-bg').forEach(e=>e.remov
   w.onclick=e=>{if(e.target===w)close()};w.querySelector('[data-m="x"]').onclick=close;w.querySelector('[data-m="ok"]').onclick=()=>{close();o.onOk&&o.onOk()};
   document.addEventListener('keydown',k);document.body.appendChild(w);w.querySelector('[data-m="x"]').focus()}
 function stFilters(){const L=CFG.levels;const regs=TREE.map(r=>[r.id,r.n]);const cens=TREE.filter(r=>!REGF.sreg.length||REGF.sreg.includes(r.id)).flatMap(r=>r.ch.map(c=>[c.id,c.n]));
-  const all=Object.values(NODES);const nex=all.filter(x=>!x.inc).length,nin=all.filter(x=>x.s!=='Activa').length;
+  const all=Object.values(NODES);const nex=stLeafPass({sexc:false}).filter(x=>!x.inc).length,nin=all.filter(x=>x.s!=='Activa').length;
   return `<div class="regf st-f${stAny()?' on':''}"><span class="regf-t" title="Filtros">${ic('filter')}</span>
     <div class="ms-l"><span>${esc(L[0]||'Nivel 1')}</span>${MSEL('sreg',regs)}</div>
     ${L.length>1?`<div class="ms-l"><span>${esc(L[1])}</span>${MSEL('scen',cens)}</div>`:''}
     <div class="ms-l"><span>Tipo de unidad</span>${MSEL('stip',CFG.tipos.map(tp=>[tp.n,tp.n]))}</div>
     <label><span>Buscar</span><input id="st-q" class="search" placeholder="Nombre o código" value="${esc(CFG.q)}"></label>
     <span class="regf-sep"></span>
-    <div class="ms-l st-estw"><span>Estado de la ${esc((L[L.length-1]||'sede').toLowerCase())}</span><div class="s1-seg st-est" role="radiogroup" aria-label="Estado">${(()=>{const lf=all.filter(x=>!x.ch.length),ni=lf.filter(x=>x.s!=='Activa').length;return [['','Todas',lf.length],['a','Activas',lf.length-ni],['i','Inactivas',ni]]})().map(([k,l,n])=>`<button type="button" role="radio" aria-checked="${REGF.sest===k}" class="${REGF.sest===k?'on':''}" data-sest="${k}">${l} <b>${n}</b></button>`).join('')}</div></div>
+    <div class="ms-l st-estw"><span>Estado de la ${esc((L[L.length-1]||'sede').toLowerCase())}</span><div class="s1-seg st-est" role="radiogroup" aria-label="Estado">${(()=>{const lf=stLeafPass({sest:'',sina:false}),ni=lf.filter(x=>x.s!=='Activa').length;return [['','Todas',lf.length],['a','Activas',lf.length-ni],['i','Inactivas',ni]]})().map(([k,l,n])=>`<button type="button" role="radio" aria-checked="${REGF.sest===k}" class="${REGF.sest===k?'on':''}" data-sest="${k}">${l} <b>${n}</b></button>`).join('')}</div></div>
     <label class="chk"><input type="checkbox" data-regf-t="sexc" ${REGF.sexc?'checked':''}><i></i>Excluidas <b>${nex}</b></label>
     ${stAny()?'<button type="button" class="lnk-calc" data-stf-clear>Limpiar</button>':''}</div>`}
 function impDrawer(){openDrawer(`<div class="dhead"><div><div class="crumb">Estructura</div><h2>Importar unidades desde Excel</h2></div><button class="btn sm" data-close type="button">Cerrar</button></div>
