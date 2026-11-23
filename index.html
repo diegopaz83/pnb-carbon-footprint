@@ -1131,6 +1131,20 @@ body:has(.rm-cta) .toast{bottom:92px;z-index:95}body:has(.rm-sheet) .toast{botto
 .qa-sum li{display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid var(--line);padding-bottom:6px}
 @media (max-width:900px){.qa-wrap{grid-template-columns:1fr}.qa-sum{position:static}}
 @media (max-width:560px){.qa-h{flex-direction:column;align-items:stretch}.qa-yn{align-self:flex-start}}
+
+.qa-wrap{display:flex!important;flex-direction:column;align-items:stretch!important;gap:10px}
+.qa-top{position:sticky;top:76px;z-index:6;display:flex;flex-wrap:wrap;align-items:center;gap:14px 28px;padding:14px 20px;border-radius:var(--r-lg);background:#0d1b33;color:#fff;box-shadow:0 10px 24px rgba(8,17,32,.18)}
+.qa-k{display:flex;flex-direction:column;gap:2px;min-width:0}
+.qa-k b{font-size:1.9rem;font-weight:300;line-height:1;color:var(--pnb-gold-500,#e6c35c)}.qa-k b small{font-size:1rem;color:rgba(255,255,255,.6)}
+.qa-k span{font-size:.78rem;color:rgba(255,255,255,.75)}
+.qa-bar{display:block;width:120px;height:4px;border-radius:2px;background:rgba(255,255,255,.18);margin-top:4px;overflow:hidden}.qa-bar i{display:block;height:100%;background:var(--pnb-gold-500,#c9a227)}
+.qa-acts{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.qa-top .btn:not(.primary){background:transparent;color:#fff;border-color:rgba(255,255,255,.4)}
+.qa-top .btn.primary:disabled{opacity:.45}
+.qa-help{margin:4px 2px 0;font-size:.9rem;color:var(--muted)}.qa-help b{color:var(--fg)}
+.qa-yn button{padding:9px 22px;min-width:64px}
+.qa-yn button[aria-checked="false"]{color:var(--muted)}
+@media (max-width:760px){.qa-top{top:64px;gap:10px 18px;padding:12px 14px}.qa-k b{font-size:1.4rem}.qa-acts{margin-left:0;width:100%}.qa-acts .btn{flex:1}}
 </style>
 
 <section class="landing" id="landing" hidden>
@@ -1615,15 +1629,17 @@ V.preguntas=()=>{
           ${g.open?`<div class="qa-l">${g.q.map((q,qi)=>`<label><input type="checkbox" data-q="${gi}-${qi}" ${q.on?'checked':''}> ${esc(qClean(q.t))}</label>`).join('')}</div>`:`<div class="qa-chips">${g.q.filter(q=>q.on).slice(0,4).map(q=>`<span>${esc(qClean(q.t))}</span>`).join('')}${n>4?`<span>+${n-4} más</span>`:''}</div>`}`:''}
       </article>`};
     const pend=qState.filter(g=>g.yes==null).length;
-    return `<div class="qa-wrap"><div class="qa-main">
-      <div class="qa-intro">${ic('list')}<div><b>Marca lo que existe en esta sede.</b> Solo eso se le preguntará cada mes a ${esc(resp)}. Lo que marques “No” no aparece en su registro.</div>${qState.some(g=>g.yes==null&&g.sug)?`<button type="button" class="btn sm" id="q-sug">Usar lo sugerido</button>`:''}</div>
+    const tot=qState.length,done=tot-pend,ny=qState.filter(g=>g.yes).length;
+    return `<div class="qa-wrap">
+      <section class="qa-top">
+        <div class="qa-k"><b>${on}</b><span>pregunta${on===1?'':'s'} verá ${esc(first)} cada mes</span></div>
+        <div class="qa-k"><b>${done}<small>/${tot}</small></b><span>respondidas</span><i class="qa-bar"><i style="width:${done/tot*100}%"></i></i></div>
+        <div class="qa-k"><b>${ny}</b><span>con Sí · ${done-ny} con No</span></div>
+        <div class="qa-acts">${qState.some(g=>g.yes==null&&g.sug)?`<button type="button" class="btn" id="q-sug">Usar lo sugerido</button>`:''}<button class="btn" id="q-back" type="button">Atrás</button><button class="btn primary" id="q-ok" type="button" ${pend?'disabled':''} title="${pend?`Faltan ${pend} por responder`:''}">Crear medición</button></div>
+      </section>
+      <p class="qa-help"><b>Marca lo que existe en esta sede.</b> Solo eso se le preguntará cada mes a ${esc(resp)}. Lo que marques “No” no aparece en su registro.</p>
       ${QGROUPS.map(([gt,keys])=>{const gs=keys.map(k=>qState.find(g=>g.s===k)).filter(Boolean);return gs.length?`<h2 class="qa-gt">${gt}</h2>${gs.map(card).join('')}`:''}).join('')}
-    </div>
-    <aside class="panel qa-sum"><h2>Así verá ${esc(first)} su mes</h2>
-      <div class="qa-big"><b>${on}</b><span>pregunta${on===1?"":"s"} cada mes</span></div>
-      <ul>${qState.filter(g=>g.yes).map(g=>`<li><span>${(QPLAIN[g.s]||[title(g.s)])[0].replace(/^¿|\?$/g,'')}</span><b>${g.q.filter(q=>q.on).length}</b></li>`).join('')||'<li class="note">Aún no has marcado nada con Sí</li>'}</ul>
-      ${pend?`<p class="note">Te faltan ${pend} por responder.</p>`:''}
-      <div class="toolbar"><button class="btn" id="q-back" type="button">Atrás</button><button class="btn primary" id="q-ok" type="button" ${pend?'disabled':''}>Crear medición</button></div></aside></div>`})()}`;
+    </div>`})()}`;
 };
 const QPLAIN={'ENERGIA ELECTRICA':['¿Paga factura de energía eléctrica?','La luz que llega de la red.'],
  'COMBUSTIBLES LIQUIDOS FUENTE MOVIL':['¿Tiene vehículos o maquinaria con diésel o gasolina?','Camionetas, tractores, motos, guadañas.'],
