@@ -932,6 +932,7 @@ body.pdf-on{overflow:hidden}
 .regf.st-f .ms-l{flex:1 1 110px;min-width:105px}
 .regf.st-f>label:not(.chk){flex:1 1 110px;min-width:105px}
 .regf.st-f .chk{flex:none!important}
+.regf.st-f .ms-l.st-estw{flex:none;min-width:0}
 .regf.st-f .search{width:100%}
 .st-mx{width:100%;border-collapse:separate;border-spacing:0;table-layout:fixed;font-size:.86rem}
 .st-mx col.c-n{width:auto}.st-mx col.c-c{width:88px}.st-mx col.c-t{width:180px}.st-mx col.c-s{width:70px}.st-mx col.c-a{width:84px}
@@ -1322,6 +1323,7 @@ input[type=checkbox]:not(.switch input):not(.chk input):not([hidden]):focus-visi
 .s1-seg button{display:inline-flex;align-items:center;gap:6px;border:0;background:transparent;font:inherit;font-size:.86rem;font-weight:700;padding:8px 16px;border-radius:999px;color:var(--muted);cursor:pointer;white-space:nowrap}
 .s1-seg button .ic{width:13px;height:13px}
 .s1-seg button.on{background:var(--pnb-gold-500,#c9a227);color:#0d1b33;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.st-est button{padding:6px 12px;font-size:.8rem}.st-est button b{font-size:.72rem;opacity:.75;margin-left:2px}
 .s1-seg button:disabled{cursor:not-allowed;opacity:.55}
 .s1-tp{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}
 .s1-tp button{display:flex;flex-direction:column;align-items:flex-start;gap:1px;border:1px solid var(--line-strong);background:var(--surface);border-radius:12px;padding:8px 14px;font:inherit;cursor:pointer;color:var(--fg);min-width:120px;text-align:left}
@@ -1539,7 +1541,7 @@ function calc(r){const A=annual(r);if(A==null)return {A:null,t:0,bio:0,steps:[]}
   return {A,base,t:kg/1000,bio,steps,bioSteps,fossil,leak};}
 function flag(r,i){const v=r.m[i];if(v==null||v==='')return false;const prev=r.m.slice(0,i).filter(x=>x!=null&&x!==''&&+x>0).map(Number);if(prev.length<3)return false;const avg=prev.reduce((a,b)=>a+b)/prev.length;return +v>=avg*10}
 let dirty=false;const sel=new Set();
-const REGF={src:[],q:[],open:null,sreg:[],scen:[],stip:[],sexc:false,sina:false,qsec:[],qq:[],qpend:false,m0:0,m1:11,help:true,noev:false,raro:false};
+const REGF={src:[],q:[],open:null,sreg:[],scen:[],stip:[],sexc:false,sina:false,sest:'',qsec:[],qq:[],qpend:false,m0:0,m1:11,help:true,noev:false,raro:false};
 function MSEL(k,opts){const sel=REGF[k];const lbl=!sel.length?'Todas':sel.length===1?(opts.find(o=>o[0]===sel[0])||['',''])[1]:sel.length+' seleccionadas';
   return `<div class="ms${REGF.open===k?' open':''}${sel.length?' has':''}" data-ms="${k}"><button type="button" class="ms-b" data-ms-t="${k}" aria-expanded="${REGF.open===k}"><span>${esc(lbl)}</span><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>
   ${REGF.open===k?`<div class="ms-pop" role="listbox" aria-multiselectable="true"><label class="ms-o all"><input type="checkbox" data-ms-all="${k}" ${!sel.length?'checked':''}><i></i>Todas</label>${opts.map(([v,l])=>`<label class="ms-o"><input type="checkbox" data-ms-v="${k}" value="${esc(v)}" ${sel.includes(v)?'checked':''}><i></i><span>${esc(l)}</span></label>`).join('')}</div>`:''}</div>`}
@@ -1554,11 +1556,11 @@ document.addEventListener('change',e=>{const a=e.target.closest('[data-ms-all]')
   const sy=document.querySelector('.ms-pop')?.scrollTop||0;rerender();const pp=document.querySelector('.ms-pop');if(pp)pp.scrollTop=sy});
 const WANT=s=>(REGF.noev&&s==='noev')||(REGF.raro&&s==='alert');
 const CNT=st=>ROWS.filter(r=>(!REGF.src.length||REGF.src.includes(r.src))&&(!REGF.q.length||REGF.q.includes(r.id))).reduce((a,r)=>a+MI().filter(i=>rowState(r,i)===st).length,0);
-document.addEventListener('click',e=>{const b=e.target.closest('button[data-regf-t]');if(b){const k=b.dataset.regfT;REGF[k]=!REGF[k];rerender()}});
+document.addEventListener('click',e=>{const se=e.target.closest('button[data-sest]');if(se){REGF.sest=se.dataset.sest;rerender();return}const b=e.target.closest('button[data-regf-t]');if(b){const k=b.dataset.regfT;REGF[k]=!REGF[k];rerender()}});
 document.addEventListener('change',e=>{const c=e.target.closest('input[data-regf-t]');if(c){REGF[c.dataset.regfT]=c.checked;rerender()}});
 const MI=()=>{const a=[];for(let i=Math.min(REGF.m0,REGF.m1);i<=Math.max(REGF.m0,REGF.m1);i++)a.push(i);return a};
 document.addEventListener('change',e=>{const el=e.target.closest('[data-regf]');if(!el)return;const k=el.dataset.regf;REGF[k]=k[0]==='m'?+el.value:el.value;if(REGF.m0>REGF.m1){const x=REGF.m0;REGF.m0=REGF.m1;REGF.m1=x}rerender()});
-document.addEventListener('click',e=>{if(e.target.closest('[data-stf-clear]')){Object.assign(REGF,{sreg:[],scen:[],stip:[],sexc:false,sina:false});CFG.q='';rerender();return}if(e.target.closest('[data-regf-clear]')){Object.assign(REGF,{src:[],q:[],m0:0,m1:11,noev:false,raro:false});rerender()}});
+document.addEventListener('click',e=>{if(e.target.closest('[data-stf-clear]')){Object.assign(REGF,{sreg:[],scen:[],stip:[],sexc:false,sina:false,sest:''});CFG.q='';rerender();return}if(e.target.closest('[data-regf-clear]')){Object.assign(REGF,{src:[],q:[],m0:0,m1:11,noev:false,raro:false});rerender()}});
 document.addEventListener('toggle',e=>{if(e.target.classList&&e.target.classList.contains('help'))REGF.help=e.target.open},true);
 V.registroTabla=()=>{
   const cells=ROWS.length*10;const filled=ROWS.reduce((a,r)=>a+r.m.slice(0,10).filter((x,i)=>has(r,i)).length,0);
@@ -2350,8 +2352,8 @@ V['cfg-estructura']=()=>{if(qSede){qSede=null;qTs=null;qState=null}const x=NODES
   <div class="scroll"><table class="st-mx"><colgroup><col class="c-n"><col class="c-t"><col class="c-s"><col class="c-s"><col class="c-r"><col class="c-p"></colgroup>
   <thead><tr><th>${lv.map(esc).join(' › ')}</th><th>Tipo de unidad</th><th>Activa</th><th>Incluida</th><th>Responsable</th><th title="Preguntas del registro mensual">Preguntas</th></tr></thead>
   <tbody>${TREE.map(stRow).join('')||`<tr><td colspan="6" class="note" style="padding:24px;text-align:center">Ninguna unidad cumple los filtros.</td></tr>`}</tbody></table></div></section>`};
-const stAny=()=>REGF.sreg.length||REGF.scen.length||REGF.stip.length||REGF.sexc||REGF.sina||CFG.q;
-function stOK(x){if(REGF.stip.length&&!REGF.stip.includes(x.tipo))return false;if(REGF.sexc&&x.inc)return false;if(REGF.sina&&x.s==='Activa')return false;
+const stAny=()=>REGF.sreg.length||REGF.scen.length||REGF.stip.length||REGF.sexc||REGF.sina||REGF.sest||CFG.q;
+function stOK(x){if(REGF.stip.length&&!REGF.stip.includes(x.tipo))return false;if(REGF.sexc&&x.inc)return false;if(REGF.sina&&x.s==='Activa')return false;if(REGF.sest==='a'&&x.s!=='Activa')return false;if(REGF.sest==='i'&&x.s==='Activa')return false;
   if(CFG.q){const q=CFG.q.toLowerCase();if(!x.n.toLowerCase().includes(q)&&!x.code.toLowerCase().includes(q))return false}return true}
 function stIn(x){let R=x;while(R.p)R=R.p;if(REGF.sreg.length&&!REGF.sreg.includes(R.id))return false;
   if(REGF.scen.length){if(x.lv===0)return false;let C=x;while(C.lv>1)C=C.p;if(!REGF.scen.includes(C.id))return false}return stOK(x)}
@@ -2381,8 +2383,8 @@ function stFilters(){const L=CFG.levels;const regs=TREE.map(r=>[r.id,r.n]);const
     <div class="ms-l"><span>Tipo de unidad</span>${MSEL('stip',CFG.tipos.map(tp=>[tp.n,tp.n]))}</div>
     <label><span>Buscar</span><input id="st-q" class="search" placeholder="Nombre o código" value="${esc(CFG.q)}"></label>
     <span class="regf-sep"></span>
+    <div class="ms-l st-estw"><span>Estado de la ${esc((L[L.length-1]||'sede').toLowerCase())}</span><div class="s1-seg st-est" role="radiogroup" aria-label="Estado">${(()=>{const lf=all.filter(x=>!x.ch.length),ni=lf.filter(x=>x.s!=='Activa').length;return [['','Todas',lf.length],['a','Activas',lf.length-ni],['i','Inactivas',ni]]})().map(([k,l,n])=>`<button type="button" role="radio" aria-checked="${REGF.sest===k}" class="${REGF.sest===k?'on':''}" data-sest="${k}">${l} <b>${n}</b></button>`).join('')}</div></div>
     <label class="chk"><input type="checkbox" data-regf-t="sexc" ${REGF.sexc?'checked':''}><i></i>Excluidas <b>${nex}</b></label>
-    <label class="chk"><input type="checkbox" data-regf-t="sina" ${REGF.sina?'checked':''}><i></i>Inactivas <b>${nin}</b></label>
     ${stAny()?'<button type="button" class="lnk-calc" data-stf-clear>Limpiar</button>':''}</div>`}
 function impDrawer(){openDrawer(`<div class="dhead"><div><div class="crumb">Estructura</div><h2>Importar unidades desde Excel</h2></div><button class="btn sm" data-close type="button">Cerrar</button></div>
   <div class="dbody"><div class="step"><span class="n">1</span><div><b>Descarga la plantilla</b><p class="note">Columnas: ${CFG.levels.map(esc).join(', ')}, código, ciudad, tipo de unidad, incluida (SI/NO).</p><button class="btn sm" type="button" id="imp-tpl">Descargar plantilla .xlsx</button></div></div>
