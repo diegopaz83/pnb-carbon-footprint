@@ -984,6 +984,22 @@ body.pdf-on{overflow:hidden}
 .st-kpis>div{display:flex;align-items:baseline;gap:8px}.st-kpis b{font-size:1.5rem;font-weight:800}.st-kpis span{color:var(--muted);font-size:.85rem}.st-kpis .note{margin:0 0 0 auto}
 tr.org-r{cursor:pointer}tr.org-r.sel td{background:color-mix(in srgb,var(--pnb-gold-500) 10%,var(--surface))}tr.org-r.sel td:first-child{box-shadow:inset 3px 0 0 var(--pnb-gold-500)}
 .org-acts{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}.org-acts .kb{opacity:1}.org-acts .kb-m{right:0;left:auto}@media (min-width:761px){.scroll.org-sc{overflow:visible}}
+.org-t{table-layout:fixed;width:100%;min-width:820px}
+.org-t col.c-a{width:118px}.org-t col.c-id{width:150px}.org-t col.c-pa{width:110px}.org-t col.c-mo{width:140px}.org-t col.c-un{width:90px}.org-t col.c-st{width:110px}.org-t col.c-k{width:44px}
+.org-t td{vertical-align:middle;padding-top:12px;padding-bottom:12px}
+.org-t .org-go{width:100%;justify-content:center}
+.org-nm{display:flex;align-items:center;gap:12px;min-width:0}.org-nm>div{min-width:0;display:flex;flex-direction:column}.org-nm b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.org-nm .note{margin:0;font-size:.76rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.org-nm .clogo{flex:none}
+.org-nit{font-size:.8rem;white-space:nowrap}
+.org-t tr.cur td{background:color-mix(in srgb,var(--pnb-gold-500) 8%,var(--surface))}.org-t tr.cur td:first-child{box-shadow:inset 3px 0 0 var(--pnb-gold-500)}
+.org-t .kb{opacity:1}
+.org-tabs{display:flex;gap:6px;padding:4px;border-radius:999px;background:var(--surface2);margin:4px 0 12px}
+.org-tabs button{flex:1;border:0;background:none;font:inherit;font-size:.82rem;font-weight:700;color:var(--muted);padding:8px 10px;border-radius:999px;cursor:pointer}
+.org-tabs button.on{background:var(--pnb-gold-500);color:#0d1b33}
+.org-f{display:grid;gap:14px}.org-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.org-f .field input,.org-f .field select{width:100%}
+.org-dh{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.org-idd .id-b:first-child{border-top:0;margin-top:0;padding-top:0}
+.drawer .dfoot .btn{white-space:nowrap}
 .org-cur{font-size:.68rem;font-weight:700;color:var(--muted);margin-left:4px}
 .sc-org{cursor:pointer;transition:border-color .15s,box-shadow .15s}.sc-org:hover,.sc-org:focus-visible{border-color:var(--pnb-gold-500);box-shadow:0 4px 14px rgba(0,0,0,.06)}
 .sc-go{display:inline-block;margin-top:10px;font-size:.8rem;font-weight:700;color:var(--fg2)}.sc-org:hover .sc-go{color:var(--fg)}.st-kpis.f{border-color:var(--pnb-gold-300);background:color-mix(in srgb,var(--pnb-gold-500) 8%,var(--surface))}
@@ -1617,7 +1633,7 @@ document.addEventListener('change',e=>{const a=e.target.closest('[data-ms-all]')
   const sy=document.querySelector('.ms-pop')?.scrollTop||0;rerender();const pp=document.querySelector('.ms-pop');if(pp)pp.scrollTop=sy});
 const WANT=s=>(REGF.noev&&s==='noev')||(REGF.raro&&s==='alert');
 const CNT=st=>ROWS.filter(r=>(!REGF.src.length||REGF.src.includes(r.src))&&(!REGF.q.length||REGF.q.includes(r.id))).reduce((a,r)=>a+MI().filter(i=>rowState(r,i)===st).length,0);
-document.addEventListener('click',e=>{const oc=e.target.closest('[data-orgcard]');if(oc){CFG.orgSel=oc.dataset.orgcard;location.hash='cfg-org';setTimeout(()=>document.querySelector('#org-det')?.scrollIntoView({block:'start'}),60);return}});
+document.addEventListener('click',e=>{const oc=e.target.closest('[data-orgcard]');if(oc){const id=oc.dataset.orgcard;location.hash='cfg-org';setTimeout(()=>orgDrawer(id,'datos'),80);return}});
 document.addEventListener('keydown',e=>{if(e.key==='Enter'){const oc=e.target.closest&&e.target.closest('[data-orgcard]');if(oc)oc.click()}});
 document.addEventListener('click',e=>{const se=e.target.closest('button[data-sest]');if(se){REGF.sest=se.dataset.sest;rerender();return}const b=e.target.closest('button[data-regf-t]');if(b){const k=b.dataset.regfT;REGF[k]=!REGF[k];rerender()}});
 document.addEventListener('change',e=>{const c=e.target.closest('input[data-regf-t]');if(c){REGF[c.dataset.regfT]=c.checked;rerender()}});
@@ -2364,29 +2380,45 @@ const badge=(t,k='n')=>`<span class="badge b-${k}">${esc(t)}</span>`;
 const stBadge=s=>badge(s,{Activa:'ok',Activo:'ok',Abierta:'info',Cerrada:'n',Borrador:'warn',Inactiva:'n',Inactivo:'n'}[s]||'n');
 
 /* Organización */
-V['cfg-org']=()=>{const o=CFG.orgs.find(x=>x.id===(CFG.orgSel||$('#org').value))||CFG.orgs[0];const cur=$('#org').value;
-  return cfgHead('Organización','Organizaciones','Cada cliente de Carbon Footprint es una organización con su estructura, vigencias y usuarios. Su logo y su nombre aparecen pequeños en el encabezado y en la portada del informe; el producto conserva la marca PNB.',`<button class="btn primary" id="org-new" type="button">Nueva organización</button>`)+`
-  <section class="panel"><h2>Clientes</h2><div class="scroll org-sc"><table><thead><tr><th>Organización</th><th>Identificación</th><th>Sector</th><th>País</th><th>Modo</th><th class="num">Unidades</th><th>Estado</th><th></th></tr></thead><tbody>
-  ${CFG.orgs.map(x=>`<tr class="org-r${x.id===o.id?' sel':''}" data-orgsel="${x.id}" tabindex="0"><td><span class="clogo sm" aria-hidden="true">${esc(x.c.slice(0,4).toUpperCase())}</span> <b>${esc(x.n)}</b></td><td class="mono">${esc(x.nit)}${F}</td><td>${esc(x.sector)}</td><td>${esc(x.pais)}</td><td>${esc(x.modo)}</td><td class="num mono">${x.id==='sena'?Object.keys(NODES).length:x.id==='pacto'?1:0}</td><td>${stBadge(x.estado)}${x.id===cur?' <span class="org-cur">En uso</span>':''}</td><td><span class="org-acts"><button class="btn sm${x.id===cur?'':' primary'}" type="button" data-orgopen="${x.id}">${x.estado==='Borrador'?'Continuar':x.id===cur?'Entrar':'Abrir'}</button><span class="kb-w"><button type="button" class="kb" data-okb="${x.id}" aria-haspopup="menu" aria-expanded="${CFG.kb==='o'+x.id}" aria-label="Acciones de ${esc(x.c)}">⋮</button>${CFG.kb==='o'+x.id?`<div class="kb-m" role="menu"><button type="button" role="menuitem" data-oed="${x.id}">Editar datos</button><button type="button" role="menuitem" data-odup="${x.id}">Duplicar configuración</button>${x.estado==='Borrador'?'':`<button type="button" role="menuitem" data-ost="${x.id}">${x.estado==='Activa'?'Desactivar':'Activar'}</button>`}<button type="button" role="menuitem" class="del" data-odel="${x.id}">Eliminar organización</button></div>`:''}</span></span></td></tr>`).join('')}
-  </tbody></table></div><p class="note"><b>Abrir</b> entra a la organización y te lleva a su estructura. Clic en la fila para ver o editar sus datos abajo. Cada cliente solo ve su propia organización.</p></section>
-  <div class="grid g2">
-  <section class="panel" id="org-det"><h2>Datos de ${esc(o.c)} ${stBadge(o.estado)}</h2><div class="form f2">
-    <label class="field"><span>Razón social</span><input id="of-n" value="${esc(o.n)}"></label>
-    <label class="field"><span>Nombre corto (encabezado)</span><input id="of-c" value="${esc(o.c)}"></label>
-    <label class="field"><span>Identificación tributaria</span><input id="of-nit" value="${esc(o.nit)}"></label>
-    <label class="field"><span>Sector</span><input id="of-sec" value="${esc(o.sector)}"></label>
-    <label class="field"><span>País</span><select><option>${esc(o.pais)}</option><option>Colombia</option><option>España</option><option>Estados Unidos</option></select></label>
-    <label class="field"><span>Modo de medición</span><select><option ${o.modo==='Inventario anual'?'selected':''}>Inventario anual</option><option ${o.modo==='Evento'?'selected':''}>Evento</option></select></label>
-  </div><div class="toolbar" style="margin-top:14px"><button class="btn primary" type="button" id="org-save">Guardar</button></div></section>
-  <section class="panel id-p"><h2>Identidad de ${esc(o.c)}</h2><p class="note">La aplicación conserva la marca PNB. El logo, el color y los fondos de aquí se usan en el encabezado y en los informes de esta organización.</p>
-    <div class="id-b"><div class="id-h"><span class="m1-n">1</span><b>Logo</b><span class="note">PNG o SVG, fondo transparente</span></div>
+V['cfg-org']=()=>{const cur=$('#org').value;const U=x=>x.id==='sena'?Object.keys(NODES).length:x.id==='pacto'?1:0;
+  return cfgHead('Organización','Organizaciones','Cada cliente de Carbon Footprint es una organización con su estructura, vigencias y usuarios. La aplicación conserva la marca PNB; el logo, el color y los fondos del cliente van en el encabezado y en sus informes.',`<button class="btn primary" id="org-new" type="button">Nueva organización</button>`)+`
+  <section class="panel"><div class="toolbar" style="justify-content:space-between;margin-bottom:8px"><h2 style="margin:0">Clientes <span class="note" style="font-weight:400">· ${CFG.orgs.length}</span></h2><span class="note">Clic en una fila para ver y editar sus datos</span></div>
+  <div class="scroll org-sc"><table class="org-t"><colgroup><col class="c-a"><col><col class="c-id"><col class="c-pa"><col class="c-mo"><col class="c-un"><col class="c-st"><col class="c-k"></colgroup>
+  <thead><tr><th></th><th>Organización</th><th>Identificación</th><th>País</th><th>Medición</th><th class="num">Unidades</th><th>Estado</th><th></th></tr></thead><tbody>
+  ${CFG.orgs.map(x=>`<tr class="org-r${x.id===cur?' cur':''}" data-orgsel="${x.id}" tabindex="0">
+    <td><button class="btn sm${x.id===cur?'':' primary'} org-go" type="button" data-orgopen="${x.id}">${x.estado==='Borrador'?'Continuar':x.id===cur?'Entrar':'Abrir'}</button></td>
+    <td><div class="org-nm"><span class="clogo${x.logo?' img':''}" aria-hidden="true">${clogoHTML(x)}</span><div><b>${esc(x.n)}</b><span class="note">${esc(x.c)} · ${esc(x.sector)}</span></div></div></td>
+    <td class="mono org-nit">${esc(x.nit)}${F}</td><td>${esc(x.pais)}</td><td>${esc(x.modo)}</td><td class="num mono">${U(x)}</td>
+    <td>${stBadge(x.estado)}${x.id===cur?'<div class="org-cur">En uso</div>':''}</td>
+    <td><span class="kb-w"><button type="button" class="kb" data-okb="${x.id}" aria-haspopup="menu" aria-expanded="${CFG.kb==='o'+x.id}" aria-label="Acciones de ${esc(x.c)}">⋮</button>${CFG.kb==='o'+x.id?`<div class="kb-m" role="menu"><button type="button" role="menuitem" data-oed="${x.id}">Editar datos</button><button type="button" role="menuitem" data-oid="${x.id}">Logo, color y fondos</button><button type="button" role="menuitem" data-odup="${x.id}">Duplicar configuración</button>${x.estado==='Borrador'?'':`<button type="button" role="menuitem" data-ost="${x.id}">${x.estado==='Activa'?'Desactivar':'Activar'}</button>`}<button type="button" role="menuitem" class="del" data-odel="${x.id}">Eliminar organización</button></div>`:''}</span></td></tr>`).join('')}
+  </tbody></table></div><p class="note"><b>Abrir</b> entra a la organización y te lleva a su estructura. Cada cliente solo ve su propia organización.</p></section>`};
+function orgIdHTML(o){return `<div class="id-b"><div class="id-h"><span class="m1-n">1</span><b>Logo</b><span class="note">PNG o SVG, fondo transparente</span></div>
       <div class="id-logo"><span class="clogo lg">${clogoHTML(o)}</span><label class="btn sm" tabindex="0">${o.logo?'Cambiar logo':'Subir logo'}<input type="file" accept="image/*" data-oimg="logo" hidden></label>${o.logo?'<button type="button" class="lnk-calc" data-oclr="logo">Quitar</button>':''}</div></div>
     <div class="id-b"><div class="id-h"><span class="m1-n">2</span><b>Color de los informes</b><span class="note">Títulos, números y líneas</span></div>
       <div class="id-col">${['#c9a227','#39a900','#00324d','#0b6bcb','#c0392b','#6b3fa0'].map(c=>`<button type="button" class="id-sw${(o.acc||'#c9a227')===c?' on':''}" style="--c:${c}" data-oacc="${c}" aria-label="Color ${c}" title="${c==='#c9a227'?'PNB (por defecto)':c}"></button>`).join('')}<label class="id-pick" title="Otro color"><input type="color" value="${o.acc||'#c9a227'}" data-oacc-in><span>Otro</span></label></div></div>
     <div class="id-b"><div class="id-h"><span class="m1-n">3</span><b>Fondos del informe</b><span class="note">Foto horizontal, mínimo 1600 px</span></div>
       <div class="id-bg">${[['cov','Portada','img/cv-paisaje.jpg'],['back','Contraportada','img/bk-huellas.jpg']].map(([k,l,d])=>`<figure class="id-f"><div class="id-im" style="background-image:url(${o[k]||d})"><span style="background:${o.acc||'#c9a227'}"></span></div><figcaption><b>${l}</b>${o[k]?'<small>Propia</small>':'<small>De PNB</small>'}</figcaption><div class="id-fa"><label class="btn sm" tabindex="0">Cambiar<input type="file" accept="image/*" data-oimg="${k}" hidden></label>${o[k]?`<button type="button" class="lnk-calc" data-oclr="${k}">Restaurar</button>`:''}</div></figure>`).join('')}</div></div>
-    <div class="toolbar" style="margin-top:14px"><a class="btn sm" href="#informe">Ver en el informe ›</a></div>
-  </section></div>`};
+    `}
+function orgDrawer(id,tab){const o=CFG.orgs.find(x=>x.id===id);if(!o)return;CFG.orgSel=id;const T=tab||'datos';
+  openDrawer(`<div class="dhead"><div><div class="crumb">Organización</div><h2 class="org-dh"><span class="clogo${o.logo?' img':''}">${clogoHTML(o)}</span>${esc(o.c)} ${stBadge(o.estado)}</h2></div><button class="iconbtn" data-close type="button" aria-label="Cerrar">✕</button></div>
+  <div class="org-tabs" role="tablist">${[['datos','1 · Datos'],['id','2 · Logo, color y fondos']].map(([k,l])=>`<button type="button" role="tab" aria-selected="${T===k}" class="${T===k?'on':''}" data-otab="${k}">${l}</button>`).join('')}</div>
+  <div class="dbody">${T==='datos'?`<div class="org-f">
+    <label class="field"><span>Razón social</span><input id="of-n" value="${esc(o.n)}"></label>
+    <label class="field"><span>Nombre corto · aparece en el encabezado</span><input id="of-c" value="${esc(o.c)}"></label>
+    <label class="field"><span>Identificación tributaria</span><input id="of-nit" value="${esc(o.nit)}"></label>
+    <label class="field"><span>Sector</span><input id="of-sec" value="${esc(o.sector)}"></label>
+    <div class="org-2"><label class="field"><span>País</span><select id="of-pa">${[...new Set([o.pais,'Colombia','España','Estados Unidos','México','Perú','Chile'])].map(p=>`<option ${p===o.pais?'selected':''}>${esc(p)}</option>`).join('')}</select></label>
+    <label class="field"><span>Medición</span><select id="of-mo">${['Inventario anual','Evento'].map(m=>`<option ${m===o.modo?'selected':''}>${m}</option>`).join('')}</select></label></div>
+    <p class="note">Dada de alta el ${esc(o.alta||'')}.</p></div>`:`<div class="id-p org-idd">${orgIdHTML(o)}</div>`}</div>
+  <div class="dfoot">${T==='datos'?`<button class="btn" data-close type="button">Cancelar</button><button class="btn" type="button" data-otab="id">Siguiente: logo y color ›</button><button class="btn primary" type="button" id="org-save">Guardar</button>`:`<button class="btn" type="button" data-otab="datos">‹ Datos</button><span style="flex:1"></span><a class="btn" href="#informe" data-close>Ver en el informe</a><button class="btn primary" type="button" data-close>Listo</button>`}</div>`,'left');
+  const redraw=()=>{orgDrawer(id,T);rerender()};
+  $$('#layer [data-otab]').forEach(b=>b.onclick=()=>{if(T==='datos')keepD();orgDrawer(id,b.dataset.otab)});
+  const keepD=()=>{if(!$('#of-n'))return;o.n=$('#of-n').value.trim()||o.n;o.c=$('#of-c').value.trim()||o.c;o.nit=$('#of-nit').value.trim();o.sector=$('#of-sec').value.trim();o.pais=$('#of-pa').value;o.modo=$('#of-mo').value;const op=[...$('#org').options].find(x=>x.value===o.id);if(op)op.textContent=o.c+(o.modo==='Evento'?' (evento)':'')};
+  $('#org-save')&&($('#org-save').onclick=()=>{keepD();closeDrawer();applyBrand();rerender();toast('Datos de '+o.c+' guardados')});
+  $$('#layer [data-oimg]').forEach(inp=>inp.onchange=()=>{const f=inp.files[0];if(!f)return;if(!/^image\//.test(f.type)){toast('Elige una imagen');return}const k=inp.dataset.oimg;const rd=new FileReader();rd.onload=()=>{o[k]=rd.result;applyBrand();redraw();toast({logo:'Logo',cov:'Portada',back:'Contraportada'}[k]+' actualizada')};rd.readAsDataURL(f)});
+  $$('#layer [data-oclr]').forEach(b=>b.onclick=()=>{delete o[b.dataset.oclr];applyBrand();redraw()});
+  $$('#layer [data-oacc]').forEach(b=>b.onclick=()=>{o.acc=b.dataset.oacc==='#c9a227'?undefined:b.dataset.oacc;applyBrand();redraw()});
+  $$('#layer [data-oacc-in]').forEach(i=>i.onchange=()=>{o.acc=i.value;applyBrand();redraw()})}
 function clogoHTML(o){return o&&o.logo?`<img src="${o.logo}" alt="${esc(o.c)}">`:esc((o?o.c:'').slice(0,4).toUpperCase())}
 function applyBrand(){const o=CFG.orgs.find(x=>x.id===$('#org').value)||{};const st=document.documentElement.style;
   if(o.acc)st.setProperty('--racc',o.acc);else st.removeProperty('--racc');
@@ -2564,11 +2596,11 @@ function bindCfg(r){
     $$('[data-orgopen]').forEach(b=>b.onclick=e=>{e.stopPropagation();const v=b.dataset.orgopen,o=CFG.orgs.find(x=>x.id===v);CFG.orgSel=v;
       if([...$('#org').options].some(x=>x.value===v)){$('#org').value=v;toast('Entraste a '+o.c);location.hash='cfg-estructura'}
       else{CFG.wiz={s:1,n:o.n,c:o.c,nit:o.nit,lv:['Sede'],an:'',ae:''};wizard();toast(o.c+' está en borrador: sigue con la estructura')}});
-    $$('[data-orgsel]').forEach(r=>{const go=()=>{CFG.orgSel=r.dataset.orgsel;rerender();document.querySelector('#org-det')?.scrollIntoView({behavior:'smooth',block:'start'})};r.onclick=go;r.onkeydown=e=>{if(e.key==='Enter')go()}});
-    $('#org-save').onclick=()=>{const o=CFG.orgs.find(x=>x.id===(CFG.orgSel||$('#org').value))||CFG.orgs[0];o.n=$('#of-n').value.trim()||o.n;o.c=$('#of-c').value.trim()||o.c;o.nit=$('#of-nit').value.trim();o.sector=$('#of-sec').value.trim();const op=[...$('#org').options].find(x=>x.value===o.id);if(op)op.textContent=o.c+(o.modo==='Evento'?' (evento)':'');rerender();toast('Datos de '+o.c+' guardados')};
-    const okb=()=>{CFG.kb=null;rerender()};
+    $$('[data-orgsel]').forEach(r=>{const go=()=>orgDrawer(r.dataset.orgsel,'datos');r.onclick=e=>{if(e.target.closest('button,a,.kb-w'))return;go()};r.onkeydown=e=>{if(e.key==='Enter'&&e.target===r)go()}});
+        const okb=()=>{CFG.kb=null;rerender()};
     $$('[data-okb]').forEach(b=>b.onclick=e=>{e.stopPropagation();const k='o'+b.dataset.okb;CFG.kb=CFG.kb===k?null:k;rerender();document.querySelector('.kb-m button')?.focus()});
-    $$('[data-oed]').forEach(b=>b.onclick=e=>{e.stopPropagation();CFG.orgSel=b.dataset.oed;okb();const d=$('#org-det');d&&d.scrollIntoView({behavior:'smooth',block:'start'});setTimeout(()=>$('#of-n')?.focus(),300)});
+    $$('[data-oed]').forEach(b=>b.onclick=e=>{e.stopPropagation();okb();orgDrawer(b.dataset.oed,'datos')});
+    $$('[data-oid]').forEach(b=>b.onclick=e=>{e.stopPropagation();okb();orgDrawer(b.dataset.oid,'id')});
     $$('[data-odup]').forEach(b=>b.onclick=e=>{e.stopPropagation();const o=CFG.orgs.find(x=>x.id===b.dataset.odup);okb();CFG.wiz={s:0,n:'',c:'',nit:'',lv:[...CFG.levels],an:'',ae:''};wizard();toast('Nueva organización con la estructura de '+o.c)});
     $$('[data-ost]').forEach(b=>b.onclick=e=>{e.stopPropagation();const o=CFG.orgs.find(x=>x.id===b.dataset.ost);okb();if(o.estado==='Activa'){confirmModal({title:'¿Desactivar '+o.c+'?',body:`<p>Sus usuarios dejan de entrar y no se pueden crear mediciones. Los datos se conservan y puedes activarla cuando quieras.</p>`,ok:'Desactivar',danger:true,onOk:()=>{o.estado='Inactiva';rerender();toast(o.c+' desactivada')}})}else{o.estado='Activa';rerender();toast(o.c+' activada')}});
     $$('[data-odel]').forEach(b=>b.onclick=e=>{e.stopPropagation();const o=CFG.orgs.find(x=>x.id===b.dataset.odel);okb();
@@ -2576,10 +2608,7 @@ function bindCfg(r){
       confirmModal({title:'¿Eliminar '+o.c+'?',body:`<p>Se borran para siempre su estructura, usuarios, mediciones e informes. Esta acción no se puede deshacer.</p><label class="mdl-f"><span>Escribe <b>${esc(o.c)}</b> para confirmar</span><input id="odel-in" class="m1-in" autocomplete="off"></label>`,ok:'Eliminar',danger:true,onOk:()=>{}});
       const okB=document.querySelector('.mdl [data-m="ok"]'),inp=document.querySelector('#odel-in');okB.disabled=true;inp.focus();inp.oninput=()=>{okB.disabled=inp.value.trim().toLowerCase()!==o.c.toLowerCase()};
       okB.addEventListener('click',()=>{CFG.orgs=CFG.orgs.filter(x=>x.id!==o.id);[...$('#org').options].forEach(op=>{if(op.value===o.id)op.remove()});if(CFG.orgSel===o.id)CFG.orgSel=null;rerender();toast(o.c+' eliminada')},{capture:true,once:true})});const curO=()=>CFG.orgs.find(x=>x.id===(CFG.orgSel||$('#org').value))||CFG.orgs[0];
-    $$('[data-oimg]').forEach(inp=>inp.onchange=()=>{const f=inp.files[0];if(!f)return;if(!/^image\//.test(f.type)){toast('Elige una imagen');return}const k=inp.dataset.oimg,o=curO();const rd=new FileReader();rd.onload=()=>{o[k]=rd.result;applyBrand();rerender();toast({logo:'Logo',cov:'Portada',back:'Contraportada'}[k]+' actualizada')};rd.readAsDataURL(f)});
-    $$('[data-oclr]').forEach(b=>b.onclick=()=>{const o=curO();delete o[b.dataset.oclr];applyBrand();rerender()});
-    $$('[data-oacc]').forEach(b=>b.onclick=()=>{const o=curO();o.acc=b.dataset.oacc==='#c9a227'?undefined:b.dataset.oacc;applyBrand();rerender()});
-    $$('[data-oacc-in]').forEach(i=>i.onchange=()=>{curO().acc=i.value;applyBrand();rerender()});}
+    }
   if(r==='cfg-estructura'){
     $$('[data-tg]').forEach(b=>b.onclick=()=>{stFix();CFG.open[b.dataset.tg]=!CFG.open[b.dataset.tg];rerender()});
     const q=$('#st-q');q.oninput=()=>{CFG.q=q.value;const p=q.selectionStart;rerender();const n=$('#st-q');n.focus();n.setSelectionRange(p,p)};
